@@ -6,7 +6,7 @@ export function Brand({ className, onDark = false }: { className?: string; onDar
     <div className={cn("flex items-center gap-2.5", className)}>
       <span
         aria-hidden
-        className="bg-brand grid size-8 place-items-center rounded-[10px] text-sm font-bold text-[#0b1411]"
+        className="bg-brand grid size-8 place-items-center rounded-control text-sm font-bold text-[#0b1411]"
       >
         K
       </span>
