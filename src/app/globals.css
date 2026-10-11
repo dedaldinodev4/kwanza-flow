@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+/*
+ * KwanzaFlow design tokens.
+ * Brand colors come from the product brief; text-safe variants were chosen with
+ * `npm run contrast` (WCAG 2.2 AA). Notably, the brief's emerald (#16A36A) is only 3.24:1
+ * on white, so it is used for graphics/fills, while text uses --success (#0E7A4F).
+ * Dark theme is authored token-by-token, not inverted.
+ */
+:root {
+  --background: #f7f8f6;
+  --foreground: #202923;
+  --card: #ffffff;
+  --card-foreground: #202923;
+  --muted: #edf1ee; /* secondary surface */
+  --muted-foreground: #5a665e;
+  --border: #dce3de; /* decorative dividers */
+  --input: #8a978f; /* form control borders, 3:1 */
+  --primary: #102d26; /* forest */
+  --primary-foreground: #ffffff;
+  --brand: #16a36a; /* emerald, graphics only */
+  --success: #0e7a4f;
+  --success-surface: #e3f4ec;
+  --destructive: #b54745;
+  --destructive-surface: #faeceb;
+  --warning: #8a5a00;
+  --warning-surface: #fbf1dc;
+  --ring: #0e7a4f;
+  --disabled: #c9d1cb;
+  --sidebar: #102d26;
+  --sidebar-foreground: #e4ece7;
+  --sidebar-muted: #9fb5aa;
+  --sidebar-active: #1b4338;
+  --chart-1: #16a36a;
+  --chart-2: #b54745;
+  --chart-3: #2f6f8f;
+  --chart-4: #c28a1e;
+  --chart-5: #6b5b95;
+  --chart-6: #7a8a82;
+  --card-shadow: 0 1px 2px rgb(16 45 38 / 0.04), 0 1px 1px rgb(16 45 38 / 0.03);
+}
+
+.dark {
+  --background: #0b1411;
+  --foreground: #e7ede9;
+  --card: #111d18;
+  --card-foreground: #e7ede9;
+  --muted: #18271f;
+  --muted-foreground: #9daaa2;
+  --border: #22332c;
+  --input: #5e7168;
+  --primary: #3dd598;
+  --primary-foreground: #0b1411;
+  --brand: #3dd598;
+  --success: #3dd598;
+  --success-surface: #12301f;
+  --destructive: #ef8a87;
+  --destructive-surface: #351a19;
+  --warning: #e8b04b;
+  --warning-surface: #2a2111;
+  --ring: #3dd598;
+  --disabled: #2c3b34;
+  --sidebar: #0f1a15;
+  --sidebar-foreground: #e7ede9;
+  --sidebar-muted: #8fa398;
+  --sidebar-active: #1a2b23;
+  --chart-1: #3dd598;
+  --chart-2: #ef8a87;
+  --chart-3: #6cb4d6;
+  --chart-4: #e8b04b;
+  --chart-5: #a898d6;
+  --chart-6: #8fa398;
+  --card-shadow: none;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+  --color-destructive: var(--destructive);
+  --color-destructive-surface: var(--destructive-surface);
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
+  --color-ring: var(--ring);
+  --color-disabled: var(--disabled);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-active: var(--sidebar-active);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --radius-card: 16px;
+  --radius-control: 10px;
+  --shadow-card: var(--card-shadow);
+  --container-content: 1440px;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* Type scale (brief §4): one place to tune sizes. */
+  .text-page-title {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .text-section {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+  }
+  .text-kpi {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .text-label {
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+  .text-caption {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  /* Tabular numerals so money columns align. */
+  .money {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}
+
+/* Motion is subtle (150ms) and removed entirely for users who prefer reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .transition-ui {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
