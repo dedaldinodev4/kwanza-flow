@@ -1,9 +1,10 @@
 import { MobileHeader, MobileTabBar } from "@/components/layout/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar";
+import { AppDataProvider } from "@/providers/app-data-provider";
 
 export default function DashboardLayout({ children }: any) {
   return (
-    <>
+    <AppDataProvider>
       <a
         href="#main"
         className="rounded-control bg-primary text-primary-foreground sr-only z-50 px-4 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
@@ -21,6 +22,6 @@ export default function DashboardLayout({ children }: any) {
         </main>
       </div>
       <MobileTabBar />
-    </>
+    </AppDataProvider>
   );
 }
