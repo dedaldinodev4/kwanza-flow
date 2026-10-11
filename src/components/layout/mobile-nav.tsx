@@ -1,7 +1,7 @@
 import { Brand } from "./brand";
 import { NavLinks } from "./nav-links";
 
-/** Compact top bar (brand + demo label) for <1024px. */
+
 export function MobileHeader() {
   return (
     <header className="bg-card flex h-14 items-center justify-between border-b px-4 lg:hidden">
@@ -13,7 +13,7 @@ export function MobileHeader() {
   );
 }
 
-/** Bottom tab bar for <1024px, respecting the iOS safe area. */
+
 export function MobileTabBar() {
   return (
     <nav

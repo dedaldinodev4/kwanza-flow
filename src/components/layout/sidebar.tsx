@@ -1,7 +1,6 @@
 import { Brand } from "./brand";
 import { NavLinks } from "./nav-links";
 
-/** Desktop navigation (≥1024px). Server component; only <NavLinks> hydrates. */
 export function Sidebar() {
   return (
     <aside className="bg-sidebar fixed inset-y-0 left-0 hidden w-62 flex-col px-4 py-6 lg:flex">
