@@ -137,7 +137,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
                   },
                 })}
               />
-              <span className="transition-ui text-muted-foreground peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-card peer-focus-visible:outline-ring flex min-h-11 cursor-pointer items-center justify-center rounded-[8px] text-sm font-medium peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+              <span className="transition-ui text-muted-foreground peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-card peer-focus-visible:outline-ring flex min-h-11 cursor-pointer items-center justify-center rounded-lg text-sm font-medium peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                 {TYPE_LABELS[option]}
               </span>
             </label>
