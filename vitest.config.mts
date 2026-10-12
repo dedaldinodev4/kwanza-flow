@@ -11,5 +11,8 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
     css: false,
+    // Integration tests drive real dialogs, forms and lazily loaded charts (some perform ~30 user
+    // interactions), so the 5s default is too tight under parallel load. A genuine hang still fails.
+    testTimeout: 15_000,
   },
 });

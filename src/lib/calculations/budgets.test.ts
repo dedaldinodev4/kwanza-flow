@@ -6,6 +6,7 @@ import {
   budgetProgressForPeriod,
   budgetStatus,
   budgetTotals,
+  unbudgetedSpending,
 } from "./budgets";
 
 describe("budgetStatus", () => {
@@ -125,5 +126,49 @@ describe("budgetTotals", () => {
 
   it("is all zeros for no budgets", () => {
     expect(budgetTotals([])).toEqual({ limit: 0, spent: 0, remaining: 0, overCount: 0 });
+  });
+});
+
+describe("unbudgetedSpending", () => {
+  const budgets = [makeBudget({ categoryId: "groceries", month: "2026-10" })];
+
+  it("lists spending in categories without a budget that month, largest first", () => {
+    const rows = unbudgetedSpending(
+      budgets,
+      [
+        makeTx({ categoryId: "groceries", amount: 500_00, date: "2026-10-03" }), // budgeted: excluded
+        makeTx({ categoryId: "dining", amount: 100_00, date: "2026-10-04" }),
+        makeTx({ categoryId: "transport", amount: 300_00, date: "2026-10-05" }),
+        makeTx({ categoryId: "dining", amount: 50_00, date: "2026-10-06" }),
+      ],
+      "2026-10",
+    );
+    expect(rows.map((r) => [r.categoryId, r.spent])).toEqual([
+      ["transport", 300_00],
+      ["dining", 150_00],
+    ]);
+  });
+
+  it("ignores income, other months, and returns nothing when everything is budgeted", () => {
+    expect(
+      unbudgetedSpending(
+        budgets,
+        [
+          makeTx({ type: "income", categoryId: "salary", amount: 9_00, date: "2026-10-04" }),
+          makeTx({ categoryId: "dining", amount: 9_00, date: "2026-09-30" }),
+        ],
+        "2026-10",
+      ),
+    ).toEqual([]);
+  });
+
+  it("counts a category as unbudgeted in a month where only another month has a budget", () => {
+    expect(
+      unbudgetedSpending(
+        budgets,
+        [makeTx({ categoryId: "groceries", amount: 10_00, date: "2026-11-02" })],
+        "2026-11",
+      ),
+    ).toHaveLength(1);
   });
 });

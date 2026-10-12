@@ -46,3 +46,9 @@ export function goalsSummary(goals: readonly SavingsGoal[]): {
     completedCount: goals.filter((g) => goalProgress(g).completed).length,
   };
 }
+
+/** A goal is overdue when it has a target date in the past and is not yet funded. */
+export function isGoalOverdue(goal: SavingsGoal, today: string): boolean {
+  return goal.targetDate !== undefined && goal.targetDate < today && !goalProgress(goal).completed;
+}
+
