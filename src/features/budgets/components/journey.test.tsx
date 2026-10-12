@@ -44,7 +44,6 @@ function SpendButton({ categoryId, amount }: { categoryId: string; amount: numbe
 
 const data = buildMockData(TODAY);
 const dashboardBudgets = () => screen.getByRole("region", { name: "Budget progress" });
-const dashboardGoals = () => screen.getByRole("region", { name: "Savings goals" });
 const valueNow = (el: HTMLElement) => Number(el.getAttribute("aria-valuenow"));
 
 beforeEach(() => vi.clearAllMocks());
