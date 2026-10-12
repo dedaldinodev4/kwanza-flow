@@ -97,3 +97,35 @@ export function budgetTotals(progress: readonly BudgetProgress[]): BudgetTotals 
     overCount: progress.filter((p) => p.status === "over").length,
   };
 }
+
+export interface UnbudgetedSpending {
+  categoryId: string;
+  name: string;
+  spent: number;
+}
+
+/**
+ * Expense categories that have spending in `month` but no budget for it, largest first.
+ * Shown beside the budgets so spending that is not being tracked is visible, not hidden.
+ */
+export function unbudgetedSpending(
+  budgets: readonly Budget[],
+  transactions: readonly Transaction[],
+  month: string,
+): UnbudgetedSpending[] {
+  const budgeted = new Set(budgets.filter((b) => b.month === month).map((b) => b.categoryId));
+  const totals = new Map<string, number>();
+  for (const t of filterByPeriod(transactions, monthRange(month))) {
+    if (t.type === "expense" && !budgeted.has(t.categoryId)) {
+      totals.set(t.categoryId, (totals.get(t.categoryId) ?? 0) + t.amount);
+    }
+  }
+  return [...totals.entries()]
+    .map(([categoryId, spent]) => ({
+      categoryId,
+      name: getCategory(categoryId)?.name ?? "Unknown category",
+      spent,
+    }))
+    .sort((a, b) => b.spent - a.spent || a.name.localeCompare(b.name));
+}
+
