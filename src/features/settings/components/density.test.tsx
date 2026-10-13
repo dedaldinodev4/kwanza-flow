@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
  * jsdom does not load CSS, so this checks the wiring statically: the "compact" density must override
  * variables that the UI really consumes. If a variable is defined but nothing reads it, the Layout density
  * setting would silently do nothing: exactly the kind of fake control the brief forbids.
- */
+ */ 
 const root = join(__dirname, "../../..");
 const css = readFileSync(join(root, "app/globals.css"), "utf8");
 
