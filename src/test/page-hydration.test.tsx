@@ -5,6 +5,7 @@ import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { BudgetsView } from "@/features/budgets/components/budgets-view";
 import { GoalsView } from "@/features/goals/components/goals-view";
+import { SettingsView } from "@/features/settings/components/settings-view";
 import { AppDataProvider } from "@/providers/app-data-provider";
 
 vi.mock("sonner", () => ({
@@ -20,6 +21,7 @@ afterEach(() => {
 const pages: [string, ReactElement, string, RegExp][] = [
   ["budgets", <BudgetsView key="b" />, "Loading your budgets", /Budgets for /],
   ["goals", <GoalsView key="g" />, "Loading your goals", /Your goals/],
+  ["settings", <SettingsView key="s" />, "Loading your settings", /Demo profile/],
 ];
 
 describe.each(pages)("%s page hydration", (_name, view, loadingText, heading) => {
