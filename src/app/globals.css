@@ -31,12 +31,17 @@
   --sidebar-foreground: #e4ece7;
   --sidebar-muted: #9fb5aa;
   --sidebar-active: #1b4338;
+  --sidebar-ring: #3dd598; /* the sidebar is dark in both themes: needs a light focus ring */
   --chart-1: #16a36a;
   --chart-2: #b54745;
   --chart-3: #2f6f8f;
   --chart-4: #c28a1e;
   --chart-5: #6b5b95;
   --chart-6: #7a8a82;
+  /* Layout density: cards and list rows read these; [data-density="compact"] tightens them. */
+  --card-pad: 1rem;
+  --card-pad-sm: 1.5rem;
+  --row-pad: 0.75rem;
   --card-shadow: 0 1px 2px rgb(16 45 38 / 0.04), 0 1px 1px rgb(16 45 38 / 0.03);
 }
 
@@ -64,6 +69,7 @@
   --sidebar-foreground: #e7ede9;
   --sidebar-muted: #8fa398;
   --sidebar-active: #1a2b23;
+  --sidebar-ring: #3dd598;
   --chart-1: #3dd598;
   --chart-2: #ef8a87;
   --chart-3: #6cb4d6;
@@ -97,12 +103,19 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-muted: var(--sidebar-muted);
   --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --radius-card: 16px;
   --radius-control: 10px;
   --shadow-card: var(--card-shadow);
   --container-content: 1440px;
+}
+
+[data-density="compact"] {
+  --card-pad: 0.75rem;
+  --card-pad-sm: 1rem;
+  --row-pad: 0.375rem;
 }
 
 @layer base {
