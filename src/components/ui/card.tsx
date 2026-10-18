@@ -6,7 +6,7 @@ export function Card({ className, ...props }: ComponentProps<"section">) {
   return (
     <section
       className={cn(
-        "rounded-card bg-card text-card-foreground shadow-card border p-4 sm:p-6",
+        "rounded-card bg-card text-card-foreground shadow-card border p-(--card-pad) sm:p-(--card-pad-sm)",
         className,
       )}
       {...props}

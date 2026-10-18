@@ -1,4 +1,22 @@
-// Verifies WCAG 2.2 contrast for the KwanzaFlow design tokens.
+// Verifies WCAG 2.2 contrast for the design tokens ACTUALLY used by the app.
+// Tokens are parsed from src/app/globals.css (not copied here), so this cannot drift from reality.
+import { readFileSync } from "node:fs";
+
+const css = readFileSync(new URL("../src/app/globals.css", import.meta.url), "utf8");
+const block = (selector) => {
+  const start = css.indexOf(`${selector} {`);
+  if (start < 0) throw new Error(`Block ${selector} not found in globals.css`);
+  const end = css.indexOf("\n}", start);
+  return Object.fromEntries(
+    [...css.slice(start, end).matchAll(/--([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})/g)].map((m) => [
+      m[1],
+      m[2],
+    ]),
+  );
+};
+const light = block(":root");
+const themes = { light, dark: { ...light, ...block(".dark") } };
+
 const lum = (hex) => {
   const c = hex
     .replace("#", "")
@@ -11,68 +29,62 @@ const ratio = (a, b) => {
   const [l1, l2] = [lum(a), lum(b)].sort((x, y) => y - x);
   return (l1 + 0.05) / (l2 + 0.05);
 };
-const T = {
-  light: {
-    bg: "#F7F8F6",
-    card: "#FFFFFF",
-    fg: "#202923",
-    muted: "#5A665E",
-    border: "#DCE3DE",
-    primary: "#102D26",
-    onPrimary: "#FFFFFF",
-    emerald: "#16A36A",
-    success: "#0E7A4F",
-    danger: "#B54745",
-    warning: "#8A5A00",
-    warningBg: "#FBF1DC",
-    secondary: "#EDF1EE",
-    ring: "#0E7A4F",
-    inputBorder: "#8A978F",
-  },
-  dark: {
-    bg: "#0B1411",
-    card: "#111D18",
-    fg: "#E7EDE9",
-    muted: "#9DAAA2",
-    border: "#22332C",
-    primary: "#3DD598",
-    onPrimary: "#0B1411",
-    emerald: "#3DD598",
-    success: "#3DD598",
-    danger: "#EF8A87",
-    warning: "#E8B04B",
-    warningBg: "#2A2111",
-    secondary: "#18271F",
-    ring: "#3DD598",
-    inputBorder: "#5E7168",
-  },
-};
-// [label, fg, bg, minimum]
-const pairs = (t) => [
-  ["body text on canvas", t.fg, t.bg, 4.5],
-  ["body text on card", t.fg, t.card, 4.5],
-  ["muted text on canvas", t.muted, t.bg, 4.5],
-  ["muted text on card", t.muted, t.card, 4.5],
-  ["muted text on secondary", t.muted, t.secondary, 4.5],
-  ["button text on primary", t.onPrimary, t.primary, 4.5],
+
+// Hard-coded colors used in components (kept explicit so a change here is a conscious decision).
+const DARK_INK = "#0b1411"; // brand mark text, destructive button text in dark mode
+const WHITE = "#ffffff"; // destructive button text in light mode
+
+// [label, foreground, background, minimum ratio]. 4.5 = text, 3 = non-text UI.
+const pairs = (t, name) => [
+  ["body text on canvas", t.foreground, t.background, 4.5],
+  ["body text on card", t.foreground, t.card, 4.5],
+  ["muted text on canvas", t["muted-foreground"], t.background, 4.5],
+  ["muted text / placeholders on card", t["muted-foreground"], t.card, 4.5],
+  ["muted text on muted surface", t["muted-foreground"], t.muted, 4.5],
+  ["primary button text", t["primary-foreground"], t.primary, 4.5],
+  ["destructive button text", name === "light" ? WHITE : DARK_INK, t.destructive, 4.5],
+  ["brand mark text on brand", DARK_INK, t.brand, 4.5],
   ["income/success text on card", t.success, t.card, 4.5],
-  ["expense text on card", t.danger, t.card, 4.5],
-  ["warning text on warning bg", t.warning, t.warningBg, 4.5],
-  ["focus ring on canvas (non-text)", t.ring, t.bg, 3],
-  ["input border on card (non-text)", t.inputBorder, t.card, 3],
-  ["raw emerald on card (non-text)", t.emerald, t.card, 3],
+  ["success badge text on its surface", t.success, t["success-surface"], 4.5],
+  ["expense/error text on card", t.destructive, t.card, 4.5],
+  ["error panel text on its surface", t.destructive, t["destructive-surface"], 4.5],
+  ["warning text on card", t.warning, t.card, 4.5],
+  ["warning notice text on its surface", t.warning, t["warning-surface"], 4.5],
+  ["sidebar link (inactive)", t["sidebar-muted"], t.sidebar, 4.5],
+  ["sidebar link (active)", t["sidebar-foreground"], t["sidebar-active"], 4.5],
+  ["sidebar brand text", t["sidebar-foreground"], t.sidebar, 4.5],
+  ["sidebar muted text on active row (hover)", t["sidebar-muted"], t["sidebar-active"], 4.5],
+  ["focus ring on canvas (non-text)", t.ring, t.background, 3],
+  ["focus ring on card (non-text)", t.ring, t.card, 3],
+  ["sidebar focus ring on sidebar (non-text)", t["sidebar-ring"], t.sidebar, 3],
+  ["sidebar focus ring on active row (non-text)", t["sidebar-ring"], t["sidebar-active"], 3],
+  ["input border on card (non-text)", t.input, t.card, 3],
+  ["progress fill: ok on track", t.success, t.muted, 3],
+  ["progress fill: warning on track", t.warning, t.muted, 3],
+  ["progress fill: over on track", t.destructive, t.muted, 3],
+  ["brand (chart/graphic) on card", t.brand, t.card, 3],
+  ["chart series 1 on card", t["chart-1"], t.card, 3],
+  ["chart series 2 on card", t["chart-2"], t.card, 3],
+  ["chart series 3 on card", t["chart-3"], t.card, 3],
+  ["chart series 4 on card", t["chart-4"], t.card, 3],
+  ["chart series 5 on card", t["chart-5"], t.card, 3],
+  ["chart series 6 on card", t["chart-6"], t.card, 3],
 ];
+
 let fail = 0;
-for (const [name, t] of Object.entries(T)) {
+for (const [name, t] of Object.entries(themes)) {
   console.log(`\n== ${name} ==`);
-  for (const [label, f, b, min] of pairs(t)) {
-    const r = ratio(f, b);
+  for (const [label, fg, bg, min] of pairs(t, name)) {
+    if (!fg || !bg) {
+      console.log(`MISSING token for: ${label}`);
+      fail++;
+      continue;
+    }
+    const r = ratio(fg, bg);
     const ok = r >= min;
     if (!ok) fail++;
     console.log(`${ok ? "PASS" : "FAIL"} ${r.toFixed(2).padStart(5)} (min ${min}) ${label}`);
   }
 }
-console.log(
-  `\nRaw brief colors on white: emerald #16A36A = ${ratio("#16A36A", "#FFFFFF").toFixed(2)}, red #B54745 = ${ratio("#B54745", "#FFFFFF").toFixed(2)}, border #DCE3DE = ${ratio("#DCE3DE", "#FFFFFF").toFixed(2)}`,
-);
+console.log(`\n${fail === 0 ? "All pairs pass." : `${fail} pair(s) FAIL.`}`);
 process.exit(fail ? 1 : 0);

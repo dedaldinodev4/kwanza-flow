@@ -2,352 +2,159 @@
 
 **Understand your money. Control your spending. Plan your future.**
 
-A modern personal finance management application designed for everyday financial life in Angola. KwanzaFlow helps users track income and expenses, manage monthly budgets, monitor savings goals, and understand their financial habits through a clean, accessible, and intuitive interface.
+A personal-finance app for the Angolan kwanza (AOA / Kz), built as a frontend-focused MVP: realistic demo data,
+everything stored in the browser, no backend and no real banking. It is a portfolio project, so the emphasis is on
+correctness, accessibility, and being honest about what has and has not been verified.
 
-> **Project status:** In development  
-> **Project type:** Personal finance management · Frontend MVP  
-> **Primary market:** Angola  
-> **Currency:** Angolan Kwanza (AOA / Kz)
+> **This is a local demo.** There are no accounts, no sign-in, and no connection to any bank. The "demo profile" is
+> a label for local data, and the app says so on every screen. Data lives only in your browser's `localStorage`.
 
----
+| Overview (desktop)                                                     | Overview (dark)                                                      |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ![Overview in light mode](docs/screenshots/overview-desktop-light.jpg) | ![Overview in dark mode](docs/screenshots/overview-desktop-dark.jpg) |
 
-## Overview
+| Overview (phone)                                             | Transactions (phone)                                                 | Add transaction (phone)                                               |
+| ------------------------------------------------------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| ![Overview on a phone](docs/screenshots/overview-mobile.jpg) | ![Transactions on a phone](docs/screenshots/transactions-mobile.jpg) | ![Add transaction sheet](docs/screenshots/add-transaction-mobile.jpg) |
 
-Managing personal finances requires more than recording transactions. It requires visibility, consistency, and tools that help people make informed decisions.
+| Budgets                                          | Goals (dark)                                                           | Settings                                           |
+| ------------------------------------------------ | ---------------------------------------------------------------------- | -------------------------------------------------- |
+| ![Budgets](docs/screenshots/budgets-desktop.jpg) | ![Savings goals in dark mode](docs/screenshots/goals-desktop-dark.jpg) | ![Settings](docs/screenshots/settings-desktop.jpg) |
 
-KwanzaFlow aims to simplify that process by bringing essential financial activities into one place. The application is being developed with a strong focus on usability, responsive design, maintainable architecture, and reliable financial calculations.
+## The problem
 
-The MVP uses deterministic demo data and browser-based persistence, allowing the core experience to be developed and tested without requiring banking integrations or a backend service.
+People who earn and spend in kwanza, whether salaried, freelancing, or running a household, rarely see their money
+as one coherent picture. KwanzaFlow answers three questions at a glance: _where did it go_ (income, expenses,
+categories), _am I on track_ (monthly budgets), and _what am I saving toward_ (goals).
 
 ## Features
 
-### Financial Dashboard
+- **Overview:** balance, income, expenses and net cash flow for a chosen period; income-vs-expense and
+  spending-by-category charts (each with a text summary and a data-table alternative); recent transactions; budget
+  progress; savings goals. The period lives in the URL (`?period=last-month`).
+- **Transactions:** create, edit and delete (with confirmation); search (case- and accent-insensitive); filter by
+  type, category and date range; stable sorting; pagination.
+- **Budgets:** monthly limits per category, a month switcher, progress, remaining or overspent amounts (in words and
+  icons, never colour alone), "copy last month", and a list of spending that has no budget.
+- **Savings goals:** create, edit, add money (never negative), completed and overdue states.
+- **Settings:** demo profile, number format, light/dark/system theme, layout density, reset demo data.
+- Works on phones (bottom tab bar, bottom-sheet dialogs, collapsible filters), tablets and desktops.
 
-- Overview of income, expenses, balance, and net cash flow.
-- Income-versus-expenses visualization.
-- Expense breakdown by category.
-- Recent transaction activity.
-- Monthly budget progress.
-- Savings goals overview.
-- Period-based financial summaries.
+## Tech stack
 
-### Transaction Management
-
-- Create, view, edit, and delete transactions.
-- Distinguish between income and expenses.
-- Search and filter by category, type, and date.
-- Sort and paginate transaction records.
-- Validate user input before saving.
-
-### Budget Management
-
-- Create monthly budgets by category.
-- Track spending against allocated limits.
-- Display remaining budget amounts.
-- Highlight budgets approaching or exceeding their limits.
-
-### Savings Goals
-
-- Create and manage savings goals.
-- Define target amounts and optional deadlines.
-- Record contributions.
-- Track progress toward financial targets.
-- Mark completed goals.
-
-### Personalization
-
-- Light and dark themes.
-- User preferences.
-- Angolan kwanza currency formatting.
-- Responsive layouts for desktop, tablet, and mobile.
-- Option to reset demo data.
-
-## Product Principles
-
-KwanzaFlow is guided by five principles:
-
-1. **Clarity over complexity** — financial information should be understandable at a glance.
-2. **Local relevance** — currency formatting and product decisions should consider the Angolan context.
-3. **Reliable calculations** — financial summaries should be derived from consistent, testable business logic.
-4. **Accessibility by default** — interfaces should support keyboard navigation, readable contrast, and meaningful labels.
-5. **Maintainability** — features should be organized so the application can evolve without unnecessary complexity.
-
-## Design System
-
-The visual direction combines minimalism with a financial-product identity.
-
-| Token | Value | Purpose |
-|---|---|---|
-| Forest Green | `#102D26` | Primary brand color |
-| Emerald | `#16A36A` | Highlights and positive actions |
-| Canvas | `#F7F8F6` | Main background |
-| Text | `#202923` | Primary text |
-| Border | `#DCE3DE` | Dividers and component borders |
-| Expense/Error | `#B54745` | Expense indicators and errors |
-
-The interface uses consistent spacing, clear typography, subtle borders, rounded components, and restrained transitions.
-
-## Technology Stack
-
-The planned stack prioritizes a modern React development workflow and strong TypeScript practices.
-
-| Technology | Purpose |
-|---|---|
-| Next.js App Router | Application structure and routing |
-| React | Component-based UI |
-| TypeScript | Static typing and safer refactoring |
-| Tailwind CSS | Styling and responsive layouts |
-| shadcn/ui + Radix UI | Accessible UI primitives |
-| Lucide | Interface icons |
-| Recharts | Financial data visualization |
-| React Hook Form | Form state management |
-| Zod | Input and data validation |
-| date-fns | Date manipulation and period calculations |
-| Vitest | Unit and component testing |
-| React Testing Library | User-oriented component tests |
-| Playwright | End-to-end testing |
-
-> The final dependency list should reflect the packages actually installed and used in the repository.
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · Radix UI primitives (shadcn/ui style,
+hand-written) · Lucide · Recharts · React Hook Form + Zod · date-fns · next-themes · sonner ·
+Vitest + React Testing Library · Playwright + axe-core · ESLint + Prettier.
+No state library (an external store + `useSyncExternalStore` was enough) and no data-fetching library (there is no
+server data).
 
 ## Architecture
 
-The application follows a feature-oriented structure, separating user interface components, business logic, data access, and shared utilities.
-
 ```text
-src/
-├── app/
-│   └── (dashboard)/
-│       ├── layout.tsx
-│       ├── page.tsx
-│       ├── transactions/
-│       │   └── page.tsx
-│       ├── budgets/
-│       │   └── page.tsx
-│       ├── goals/
-│       │   └── page.tsx
-│       └── settings/
-│           └── page.tsx
-├── components/
-│   ├── ui/
-│   ├── layout/
-│   ├── charts/
-│   └── feedback/
-├── constants/
-│    └── index.ts
-├── features/
-│   ├── dashboard/
-│   ├── transactions/
-│   ├── budgets/
-│   ├── goals/
-│   └── settings/
-├── lib/
-│   ├── formatters/
-│   ├── dates/
-│   └── utils.ts
-├── providers/
-├── mocks/
-└── types/
+UI components ─▶ feature hooks/components ─▶ pure domain services ─▶ repository ─▶ localStorage adapter
+     │                                              │
+     └──────────── pure calculations ◀──────────────┘   (no React, no storage, no formatting)
 ```
 
-This structure is a proposed organizational baseline. Files and directories may evolve as implementation progresses.
+- `src/lib/calculations` is the single source of every financial number: totals, balance, category shares, chart
+  series, budget progress, goal progress. The dashboard builds its whole view from one function
+  (`buildDashboardModel`), so KPIs, charts, lists and budgets cannot disagree.
+- **Money** is integer minor units (cêntimos): Kz 1.500,50 is `150050`. No floating-point arithmetic; the amount
+  parser reads text such as `1.500,50` without it. **Dates** are local ISO `YYYY-MM-DD` strings and never pass
+  through `toISOString()`, which would shift the day near midnight.
+- `src/lib/storage` holds the repository: a versioned envelope `{version, savedAt, data}`, layered validation on
+  load (JSON → envelope → Zod schema → referential integrity), a migration hook, and a backup of anything rejected.
+  Storage can fail (full, blocked); the app keeps working in memory and says so.
+- `src/lib/store` is a small external store consumed with `useSyncExternalStore`. The server and the first client
+  render both see "loading", so there is no hydration mismatch.
+- `src/features/*` are the five product areas (schemas, services, components). Dialogs are code-split and mount only
+  when opened; the charts mount when the browser is idle.
 
-### Architectural Decisions
-
-- Keep financial calculations independent of UI components.
-- Use Server Components by default and Client Components where interactivity or browser APIs require them.
-- Encapsulate browser persistence behind a repository abstraction.
-- Validate forms and persisted data.
-- Derive dashboard metrics from the underlying transaction records.
-- Avoid unnecessary abstractions and dependencies.
-
-### Data Persistence
-
-The MVP uses browser-based persistence for demonstration purposes.
-
-The intended data flow is:
-
-```text
-UI Components
-     ↓
-Feature Hooks
-     ↓
-Business Services
-     ↓
-Repository Interface
-     ↓
-Browser Storage Adapter
-```
-
-This approach keeps storage details separate from business logic and provides a possible path toward a future backend implementation.
-
-**Important:** browser storage is intended for demo data, not sensitive real-world financial information.
-
-## Financial Data Integrity
-
-Financial applications require particular care when handling amounts and calculations.
-
-KwanzaFlow aims to:
-
-- Represent monetary values using integer units at a documented scale rather than relying on floating-point arithmetic.
-- Apply consistent date ranges and month boundaries.
-- Calculate balances, spending totals, and budget progress from a single source of truth.
-- Validate transaction amounts and required fields.
-- Test financial calculations independently of the interface.
-- Format monetary values according to the application's currency and locale settings.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js LTS
-- npm
-- Git
-
-### Installation
-
-Clone the repository:
+## Getting started
 
 ```bash
-git clone https://github.com/dedaldinodev4/kwanza-flow
-cd kwanzaflow
-```
-
-Install dependencies:
-
-```bash
+nvm use            # Node 22 (see .nvmrc)
 npm install
+npm run dev        # http://localhost:3000
 ```
 
-Start the development server:
+## Testing
 
 ```bash
-npm run dev
+npm run verify        # format check, lint, typecheck, contrast, unit tests, production build
+npm test              # unit + component + integration tests (Vitest)
+npm run contrast      # WCAG contrast of every design-token pair, both themes, read from globals.css
+npx playwright install chromium
+npm run e2e           # builds, starts a production server, runs the Playwright suites
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+What is covered (see [docs/verification.md](docs/verification.md) for exactly what was run and what the results were):
 
-### Available Scripts
+- **Unit / component / integration:** calculations, schemas, services, repository (corruption, versions, migrations,
+  storage failures), the store, forms, dialogs, lists, hydration, and cross-feature journeys. Many tests were
+  checked by deliberately breaking the code ("mutation checks") to confirm they fail when they should.
+- **End to end (Playwright, desktop and a phone profile):** the full create → edit → filter → delete journey with
+  dashboard totals checked at each step, budgets, goals, persistence across reload, theme, reset; no horizontal
+  overflow at 360/390/768/1024/1440 px in both themes; keyboard flows (skip link, visible focus, dialog focus trap,
+  arrow keys); and an axe-core scan of every page and dialog in both themes.
 
-The following scripts are examples of the intended development workflow. Their availability depends on the current `package.json`.
+## Design decisions
 
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run test
-```
+- **Calm, restrained fintech look.** Forest green and emerald on a warm off-white; a hand-authored dark theme (not an
+  inversion). Tabular numerals for money. 4 px spacing scale, 16 px cards, ≥44 px controls.
+- **Colour is never the only signal.** Income/expense carry a sign, budget and goal states carry words and icons,
+  chart categories are named in a legend with amounts and percentages.
+- **Contrast is verified, not assumed.** The brief's emerald (`#16A36A`) is only 3.24:1 on white, so it is used for
+  graphics while text uses a darker green. A script checks every pair from the real stylesheet.
+- **Mobile is designed, not shrunk.** Bottom tab bar, bottom sheets, a table on desktop and cards on phones,
+  filters behind a toggle so transactions are visible immediately.
+- **No fake controls.** The Portuguese (Portugal) number format renders identically to Angola's, so it is not
+  offered as a separate choice; layout density is wired to real CSS variables and a test guards that.
 
-Check the project's scripts before running commands that have not yet been configured.
+## Performance and accessibility (measured)
 
-## Testing Strategy
+Final production build, audited with Lighthouse 13.5 on the overview page:
 
-Testing should cover both individual financial rules and complete user workflows.
+| Preset  | Performance | Accessibility | Best Practices | SEO | LCP   | TBT      | CLS   |
+| ------- | ----------- | ------------- | -------------- | --- | ----- | -------- | ----- |
+| Desktop | 71          | 100           | 100            | 100 | 1.5 s | 590 ms   | 0.021 |
+| Mobile  | 69          | 100           | 100            | 100 | 2.8 s | 1,630 ms | 0     |
 
-### Unit Tests
+**The Performance target (90+) was not met in this environment**, and the number should be read with care: the audit
+ran on a single-CPU container, on the same machine as the server and the browser, so main-thread timings are
+inflated. Two changes made a real, repeatable difference (41 → 71 on desktop): turning off Recharts bar animation
+and mounting the charts when the browser is idle. The remaining cost is React/Recharts evaluation. It still needs to
+be measured on real hardware and on the deployed app. Accessibility, Best Practices and SEO met their targets.
 
-- Balance and cash-flow calculations.
-- Category totals.
-- Budget progress and limit handling.
-- Savings goal progress.
-- Currency formatting and date boundaries.
+## Known limitations
 
-### Component Tests
+- **Not deployed.** The project is prepared for Vercel (no environment variables needed), but nothing has been
+  deployed, so there are no deployed-app measurements.
+- **Browsers:** tested in Chromium only (desktop and a Pixel 7 profile). Firefox, Safari and real devices were not
+  tested, and no screen reader (NVDA, VoiceOver, TalkBack) was used. Automated checks (axe, keyboard tests) are not a
+  substitute for that.
+- **CI:** `.github/workflows/ci.yml` is written but has never run on GitHub.
+- **Data:** browser-only, per device. Clearing site data removes it. If a save fails, the change exists only in
+  memory and the app warns you.
+- **Language and formats:** the interface is English; two number formats (Angola, US English); dates are English.
+- **Scope:** no transfers between accounts, no recurring transactions, no custom categories, no goal withdrawals,
+  no export/import, no real authentication or backend (by design).
+- **Opening balance** cannot be negative (the data model allows it; the input parser has no sign support).
+- **First-load JavaScript** is about 250 KB gzipped on every route (React and Next ≈ 150 KB, Zod ≈ 40 KB because
+  stored data is validated on load).
+- The unit suite takes about two minutes on a single core (mostly per-file jsdom start-up).
 
-- Form validation and submission.
-- Transaction filtering and sorting.
-- Empty states and feedback messages.
-- Theme and preference interactions.
+## Future improvements
 
-### End-to-End Tests
+Export/import of data; recurring transactions; custom categories; Portuguese interface; optional real backend behind
+the existing repository interface; a Content-Security-Policy with nonces; `zod/mini` to cut the validation cost;
+real-device and screen-reader testing; Lighthouse CI against the deployed app.
 
-- Create and edit a transaction.
-- Verify dashboard metrics after a transaction changes.
-- Create a monthly budget and record spending.
-- Create a savings goal and add a contribution.
-- Verify persistence after reloading the application.
+## Deploying to Vercel
 
-## Accessibility and Responsive Design
+Import the repository (framework preset: Next.js, Node 22). No environment variables are required. Security headers
+are set in `next.config.ts`.
 
-The interface targets WCAG 2.2 AA accessibility practices.
-
-- Semantic HTML and accessible form labels.
-- Keyboard navigation and visible focus indicators.
-- Sufficient text and interface contrast.
-- Reduced-motion support.
-- Responsive layouts for small and large screens.
-- Meaningful alternatives for charts and visual indicators.
-- Clear validation, empty, error, and success states.
-
-These are implementation goals and should be verified through actual testing.
-
-## Development Roadmap
-
-- [ ] Establish the design system and responsive application shell.
-- [ ] Implement dashboard components and financial calculations.
-- [ ] Build transaction management and browser persistence.
-- [ ] Implement monthly budgets.
-- [ ] Implement savings goals and contributions.
-- [ ] Add settings and theme preferences.
-- [ ] Write unit and component tests.
-- [ ] Add end-to-end tests for critical workflows.
-- [ ] Audit accessibility, responsive behavior, and performance.
-- [ ] Prepare screenshots, documentation, and deployment.
-
-## Scope and Limitations
-
-The initial version is focused on demonstrating the core personal finance experience.
-
-### Included in the MVP
-
-- Demo financial data.
-- Transaction management.
-- Budget tracking.
-- Savings goals.
-- Browser-based persistence.
-- Dashboard analytics.
-
-### Outside the Initial Scope
-
-- Direct bank connections.
-- Real payments and money transfers.
-- Automatic bank statement imports.
-- Investment management.
-- Shared financial accounts.
-- AI-generated financial recommendations.
-- Production backend and authentication.
-
-These limitations may change as the project evolves.
-
-## Future Improvements
-
-Potential future directions include:
-
-- Backend API and database integration.
-- Authentication and secure multi-user data isolation.
-- Data export and import.
-- Financial reports with custom date ranges.
-- Recurring transactions.
-- Improved offline support.
-- Deployment automation and continuous integration.
-
-Future improvements will depend on user needs, technical priorities, and security requirements.
-
-## Contributing
-
-This project is being developed as a learning and portfolio initiative. Suggestions, issue reports, and constructive feedback are welcome.
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Make focused changes.
-4. Run the available checks.
-5. Submit a pull request describing the change.
-
-## Disclaimer
-
-KwanzaFlow is an educational and portfolio project. It is not a banking service, does not connect to financial institutions, and does not provide professional financial advice.
-
-All sample financial data is for demonstration purposes.
 
 ## Author
 
