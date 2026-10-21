@@ -43,7 +43,7 @@ describe("layout density is wired through to the UI", () => {
 
   it.each(Object.keys(compact))(
     "--%s has a comfortable default and a different compact value",
-    (name) => {
+    (name) => { 
       expect(comfortable[name], `:root --${name}`).toBeDefined();
       expect(compact[name]).not.toBe(comfortable[name]);
     },
@@ -55,7 +55,7 @@ describe("layout density is wired through to the UI", () => {
       `nothing reads --${name}`,
     ).toBe(true);
   });
-
+ 
   it("compact is tighter than comfortable for every variable", () => {
     const rem = (v: string) => parseFloat(v);
     for (const name of Object.keys(compact))

@@ -11,6 +11,12 @@ export function Probe() {
       <button type="button" onClick={() => mutate((d) => ({ ...d, transactions: [] }))}>
         probe: clear transactions
       </button>
+      <button type="button" onClick={() => mutate((d) => ({ ...d, budgets: [] }))}>
+        probe: clear budgets
+      </button>
+      <button type="button" onClick={() => mutate((d) => ({ ...d, goals: [] }))}>
+        probe: clear goals
+      </button>
     </div>
   );
 }
