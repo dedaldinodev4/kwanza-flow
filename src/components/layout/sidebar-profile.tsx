@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useAppData } from "@/providers/app-data-provider";
 
 
 export function SidebarProfile() {
   const state = useAppData();
+  const { t } = useTranslation();
   if (state.status !== "ready") return <div aria-hidden className="h-10" />;
   const name = state.data.preferences.displayName;
   const initials = name
@@ -23,7 +25,7 @@ export function SidebarProfile() {
       </span>
       <div className="min-w-0">
         <p className="text-sidebar-foreground truncate text-sm font-medium">{name}</p>
-        <p className="text-sidebar-muted text-caption">Demo profile</p>
+        <p className="text-sidebar-muted text-caption">{t("Demo profile")}</p>
       </div>
     </div>
   );
