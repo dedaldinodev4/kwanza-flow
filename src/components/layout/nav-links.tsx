@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { isActivePath, NAV_ITEMS } from "./nav-items";
 
@@ -12,6 +13,7 @@ interface NavLinksProps {
 /** The only client piece of the shell: it needs `usePathname` for the active indicator. */
 export function NavLinks({ variant }: NavLinksProps) {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <ul className={cn(variant === "sidebar" ? "flex flex-col gap-1" : "grid grid-cols-5")}>
@@ -39,7 +41,7 @@ export function NavLinks({ variant }: NavLinksProps) {
               )}
             >
               <Icon aria-hidden className="size-5 shrink-0" />
-              <span>{label}</span>
+              <span>{t(label)}</span>
               {variant === "sidebar" && active && (
                 <span aria-hidden className="bg-brand ml-auto size-1.5 rounded-full" />
               )}
