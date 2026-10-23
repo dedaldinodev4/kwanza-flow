@@ -1,7 +1,9 @@
 "use client";
 
-import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
 import type { ComponentProps, ReactNode } from "react";
+import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
+import { useTranslation } from "react-i18next";
+
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useReturnFocus } from "@/hooks/use-return-focus";
@@ -25,6 +27,8 @@ export function AlertDialogContent({
   onConfirm: () => void;
 }) {
   const returnFocus = useReturnFocus();
+  const { t } = useTranslation();
+
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
@@ -47,7 +51,7 @@ export function AlertDialogContent({
         {children && <div className="mt-4">{children}</div>}
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <AlertDialogPrimitive.Cancel className={buttonVariants({ variant: "outline" })}>
-            Cancel
+            {t("Cancel")}
           </AlertDialogPrimitive.Cancel>
           <AlertDialogPrimitive.Action
             className={buttonVariants({ variant: "destructive" })}

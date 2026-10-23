@@ -1,8 +1,10 @@
 "use client";
 
-import { X } from "lucide-react";
-import { Dialog as DialogPrimitive } from "radix-ui";
 import type { ComponentProps, ReactNode } from "react";
+import { Dialog as DialogPrimitive } from "radix-ui";
+import { useTranslation } from "react-i18next";
+import { X } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { useReturnFocus } from "@/hooks/use-return-focus";
 
@@ -22,6 +24,8 @@ export function DialogContent({
   children: ReactNode;
 }) {
   const returnFocus = useReturnFocus();
+  const { t } = useTranslation();
+
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
@@ -46,7 +50,7 @@ export function DialogContent({
             </DialogPrimitive.Description>
           </div>
           <DialogPrimitive.Close
-            aria-label="Close"
+            aria-label={t("Close")}
             className="transition-ui rounded-control hover:bg-muted -mt-1 -mr-2 grid size-11 shrink-0 place-items-center"
           >
             <X aria-hidden className="size-5" />
