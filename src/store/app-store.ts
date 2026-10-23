@@ -1,3 +1,4 @@
+import { type MessageParams, message } from "@/i18n/utils";
 import type { AppDataRepository, Notice, SaveResult } from "./storage/repository";
 
 import { STORAGE_KEY } from "./storage/repository";
@@ -19,7 +20,7 @@ export type MutationResult =
   { ok: true } | { ok: false; error: string; reason: "rejected" | "not-saved" };
 
 
-export type Outcome = { ok: true; data: AppData } | { ok: false; error: string };
+export type Outcome = { ok: true; data: AppData } | { ok: false; error: string; params?: MessageParams };
 
 interface StoreOptions {
   repository: AppDataRepository;
@@ -61,7 +62,11 @@ export class AppStore {
   tryMutate = (update: (data: AppData) => Outcome): MutationResult => {
     const current = this.getSnapshot();
     if (current.status !== "ready") {
-      return { ok: false, error: "Your data has not finished loading yet.", reason: "rejected" };
+      return { 
+        ok: false, 
+        error: message("Your data has not finished loading yet."), 
+        reason: "rejected" 
+      };
     }
     const outcome = update(current.data);
     if (!outcome.ok) return { ok: false, error: outcome.error, reason: "rejected" };

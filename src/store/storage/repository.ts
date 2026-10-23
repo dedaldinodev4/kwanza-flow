@@ -1,3 +1,4 @@
+import { type MessageParams, message } from "@/i18n/utils";
 import { appDataSchema, type AppData } from "@/types/domain";
 import { checkIntegrity } from "./integrity";
 import type { StorageLike } from "./storage";
@@ -12,7 +13,8 @@ export type Migrations = Readonly<Record<number, (data: unknown) => unknown>>;
 export const MIGRATIONS: Migrations = {};
 
 export type Notice =
-  { kind: "recovered"; message: string } | { kind: "unavailable"; message: string };
+  | { kind: "recovered"; reason: string; params?: MessageParams }
+  | { kind: "unavailable"; message: string };
 
 export type LoadResult = { data: AppData; notice: Notice | null };
 export type SaveResult = { ok: true } | { ok: false; error: string };
@@ -23,7 +25,7 @@ export interface AppDataRepository {
   reset(today: string): LoadResult;
 }
 
-type Parsed = { ok: true; data: AppData } | { ok: false; reason: string };
+type Parsed = { ok: true; data: AppData } | { ok: false; reason: string; params?: MessageParams };
 
 //* Pure: raw string → validated AppData, or a reason it was rejected. *//
 export function parseStoredData(
@@ -51,11 +53,21 @@ export function parseStoredData(
   let current: unknown = data;
   for (let v = version; v < currentVersion; v += 1) {
     const migrate = migrations[v];
-    if (!migrate) return { ok: false, reason: `No migration exists from version ${v}.` };
+    if (!migrate) {
+      return {
+        ok: false,
+        reason: message("No migration exists from version {{version}}."),
+        params: { version: v },
+      };
+    }
     try {
       current = migrate(current);
     } catch {
-      return { ok: false, reason: `Upgrading saved data from version ${v} failed.` };
+      return {
+        ok: false,
+        reason: message("Upgrading saved data from version {{version}} failed."),
+        params: { version: v },
+      };
     }
   }
 
@@ -63,12 +75,18 @@ export function parseStoredData(
   if (!result.success) {
     return {
       ok: false,
-      reason: `The saved data failed validation (${result.error.issues.length} issue(s)).`,
+      reason: message("The saved data failed validation ({{count}} problems found)."),
+      params: { count: result.error.issues.length },
     };
   }
   const problems = checkIntegrity(result.data);
   if (problems.length > 0)
-    return { ok: false, reason: `The saved data is inconsistent: ${problems[0]}` };
+    // The detail is a technical diagnostic (it names ids), so it is shown as written.
+    return {
+      ok: false,
+      reason: message("The saved data is inconsistent: {{detail}}"),
+      params: { detail: problems[0] },
+    };
   return { ok: true, data: result.data };
 }
 
@@ -118,8 +136,9 @@ export function createStorageRepository(options: {
           data: buildDefault(today),
           notice: {
             kind: "unavailable",
-            message:
+            message: message(
               "Browser storage is unavailable. The demo works, but nothing will be kept after you leave.",
+            ),
           },
         };
       }
@@ -131,7 +150,9 @@ export function createStorageRepository(options: {
           data: buildDefault(today),
           notice: {
             kind: "unavailable",
-            message: "Browser storage could not be read. The demo works, but nothing will be kept.",
+            message: message(
+              "Browser storage could not be read. The demo works, but nothing will be kept.",
+            ),
           },
         };
       }
@@ -148,7 +169,8 @@ export function createStorageRepository(options: {
       }
       return seed(today, {
         kind: "recovered",
-        message: `${parsed.reason} Demo data was restored and the old copy was kept as a backup.`,
+        reason: parsed.reason,
+        params: parsed.params,
       });
     },
 
