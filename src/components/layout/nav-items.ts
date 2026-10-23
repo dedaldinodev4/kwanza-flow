@@ -6,6 +6,7 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
+import { message } from "@/i18n/utils";
 
 export interface NavItem {
   href: "/" | "/transactions" | "/budgets" | "/goals" | "/settings";
@@ -15,11 +16,11 @@ export interface NavItem {
 
 /** Single source of truth for navigation, shared by the sidebar and the mobile tab bar. */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { href: "/", label: "Overview", icon: LayoutDashboard },
-  { href: "/transactions", label: "Transactions", icon: ArrowLeftRight },
-  { href: "/budgets", label: "Budgets", icon: PiggyBank },
-  { href: "/goals", label: "Goals", icon: Target },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/", label: message("Overview"), icon: LayoutDashboard },
+  { href: "/transactions", label: message("Transactions"), icon: ArrowLeftRight },
+  { href: "/budgets", label: message("Budgets"), icon: PiggyBank },
+  { href: "/goals", label: message("Goals"), icon: Target },
+  { href: "/settings", label: message("Settings"), icon: Settings },
 ] as const;
 
 /** `/` only matches exactly; other items match their own subtree. */
