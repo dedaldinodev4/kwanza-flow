@@ -77,7 +77,7 @@ describe("Dashboard - BudgetProgress", () => {
         ]}
       />,
     );
-    const bar = screen.getByRole("progressbar", { name: "Dining out budget used" });
+    const bar = screen.getByRole("progressbar", { name: "{{name}} out budget used" });
     expect(bar).toHaveAttribute("aria-valuenow", "130");
     expect(bar.firstElementChild).toHaveStyle({ width: "100%" }); // drawn full, text carries detail
   });
