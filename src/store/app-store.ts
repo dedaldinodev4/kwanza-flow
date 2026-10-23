@@ -4,15 +4,16 @@ import type { AppDataRepository, Notice, SaveResult } from "./storage/repository
 import { STORAGE_KEY } from "./storage/repository";
 import type { AppData } from "@/types/domain";
 
+
 export type AppState =
   | { status: "loading" }
   | {
-      status: "ready";
-      today: string;
-      data: AppData;
-      notice: Notice | null;
-      persistenceError: string | null;
-    };
+    status: "ready";
+    today: string;
+    data: AppData;
+    notice: Notice | null;
+    persistenceError: string | null;
+  };
 
 const LOADING: AppState = { status: "loading" };
 
@@ -20,7 +21,8 @@ export type MutationResult =
   { ok: true } | { ok: false; error: string; reason: "rejected" | "not-saved" };
 
 
-export type Outcome = { ok: true; data: AppData } | { ok: false; error: string; params?: MessageParams };
+export type Outcome =
+  { ok: true; data: AppData } | { ok: false; error: string; params?: MessageParams };
 
 interface StoreOptions {
   repository: AppDataRepository;
@@ -35,7 +37,7 @@ export class AppStore {
   private listeners = new Set<() => void>();
   private stopListening: (() => void) | null = null;
 
-  constructor(private readonly options: StoreOptions) {}
+  constructor(private readonly options: StoreOptions) { }
 
   getServerSnapshot = (): AppState => LOADING;
 
@@ -58,14 +60,14 @@ export class AppStore {
     };
   };
 
-  //* Applies a pure update that may refuse (e.g. "that transaction no longer exists"). A refusal changes *//
+
   tryMutate = (update: (data: AppData) => Outcome): MutationResult => {
     const current = this.getSnapshot();
     if (current.status !== "ready") {
-      return { 
-        ok: false, 
-        error: message("Your data has not finished loading yet."), 
-        reason: "rejected" 
+      return {
+        ok: false,
+        error: message("Your data has not finished loading yet."),
+        reason: "rejected",
       };
     }
     const outcome = update(current.data);
@@ -79,11 +81,10 @@ export class AppStore {
     return saved.ok ? { ok: true } : { ok: false, error: saved.error, reason: "not-saved" };
   };
 
-  //* Simple form of `tryMutate` for updates that cannot fail. *//
+ 
   mutate = (update: (data: AppData) => AppData): MutationResult =>
     this.tryMutate((data) => ({ ok: true, data: update(data) }));
 
-  //* Replaces all data with fresh demo data (the caller is responsible for asking for confirmation). *//
   resetDemoData = (): MutationResult => {
     const today = this.options.getToday();
     const result = this.options.repository.reset(today);
@@ -118,7 +119,6 @@ export class AppStore {
     };
   }
 
-  //* Another tab changed the stored data: pick it up so tabs do not silently overwrite each other. *//
   private reloadFromStorage(): void {
     this.load();
     this.emit();
@@ -134,7 +134,6 @@ export class AppStore {
   }
 }
 
-//* Browser wiring: reacts to the `storage` event that fires in OTHER tabs when our key changes. *//
 export function listenForStorageEvents(onChange: () => void): () => void {
   const handler = (event: StorageEvent) => {
     if (event.key === STORAGE_KEY || event.key === null) onChange();

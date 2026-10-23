@@ -1,7 +1,11 @@
 import { StorageNotice } from "@/components/feedback/storage-notice";
 import { Toaster } from "@/components/feedback/toaster";
+
 import { MobileHeader, MobileTabBar } from "@/components/layout/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar";
+import { SkipLink } from "@/components/layout/skip-link";
+import { DocumentTitle } from "@/components/layout/document-title";
+
 import { DensityScope } from "@/features/settings/components/density-scope";
 import { AppDataProvider } from "@/providers/app-data-provider";
 
@@ -9,12 +13,8 @@ export default function DashboardLayout({ children }: LayoutProps<"/">) {
   return (
     <AppDataProvider>
       <DensityScope>
-        <a
-          href="#main"
-          className="rounded-control bg-primary text-primary-foreground sr-only z-50 px-4 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
-        >
-          Skip to main content
-        </a>
+        <SkipLink />
+        <DocumentTitle />
         <Sidebar />
         <div className="lg:pl-62">
           <MobileHeader />
