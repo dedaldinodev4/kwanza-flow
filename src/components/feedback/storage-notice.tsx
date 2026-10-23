@@ -19,8 +19,8 @@ export function StorageNotice() {
     ? t(persistenceError)
     : notice?.kind === "recovered"
       ? t("{{reason}} Demo data was restored and the old copy was kept as a backup.", {
-          reason: message(notice.reason, notice.params),
-        })
+        reason: message(notice.reason, notice.params),
+      })
       : notice
         ? t(notice.message)
         : null;
