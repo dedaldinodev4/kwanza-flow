@@ -2,24 +2,29 @@ import { z } from "zod";
 import { getCategory } from "@/lib/categories";
 import { amountError } from "@/lib/money/amount-validation";
 import { parseMoneyInput } from "@/lib/money/parse-money";
+import { message } from "@/i18n/utils";
 
 
 export const budgetFormSchema = z
   .object({
-    categoryId: z.string().min(1, "Choose a category."),
-    limit: z.string().trim().min(1, "Enter a monthly limit."),
+    categoryId: z.string().min(1, message("Choose a category.")),
+    limit: z.string().trim().min(1, message("Enter a monthly limit.")),
   })
   .superRefine((values, ctx) => {
     if (values.categoryId && getCategory(values.categoryId)?.type !== "expense") {
       ctx.addIssue({
         code: "custom",
         path: ["categoryId"],
-        message: "Choose an expense category.",
+        message: message("Choose an expense category."),
       });
     }
     if (values.limit) {
       const message = amountError(values.limit);
-      if (message) ctx.addIssue({ code: "custom", path: ["limit"], message });
+      if (message) ctx.addIssue({ 
+        code: "custom", 
+        path: ["limit"], 
+        message 
+      });
     }
   });
 

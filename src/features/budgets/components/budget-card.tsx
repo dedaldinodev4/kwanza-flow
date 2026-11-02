@@ -1,6 +1,7 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button, ProgressBar } from "@/components/ui";
 import type { BudgetProgress } from "@/lib/calculations";
@@ -14,21 +15,24 @@ interface BudgetCardProps {
 }
 
 export function BudgetCard({ progress, onEdit, onDelete }: BudgetCardProps) {
+  const { t } = useTranslation();
   const { money, ratio } = useFormat();
+
   return (
     <li className="rounded-card bg-card shadow-card border p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold">{progress.name}</h3>
+          <h3 className="truncate text-sm font-semibold">{t("{{name}}", { name: progress.name})}</h3>
           <p className="money text-caption text-muted-foreground">
-            {money(progress.spent)} of {money(progress.limit)} · {ratio(progress.ratio)}
+            {t("{{spent}} of {{limit}} · {{ratio}}", 
+              { spent: money(progress.spent), limit: money(progress.limit), ratio: ratio(progress.ratio)})}
           </p>
         </div>
         <div className="-mt-1 -mr-2 flex shrink-0">
           <Button
             variant="ghost"
             size="icon"
-            aria-label={`Edit ${progress.name} budget`}
+            aria-label={t("Edit {{name}} budget", { name: progress.name})}
             onClick={onEdit}
           >
             <Pencil aria-hidden className="size-4" />
@@ -36,7 +40,7 @@ export function BudgetCard({ progress, onEdit, onDelete }: BudgetCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            aria-label={`Delete ${progress.name} budget`}
+            aria-label={t("Delete {{name}} budget", { name: progress.name})}
             onClick={onDelete}
           >
             <Trash2 aria-hidden className="size-4" />
@@ -46,7 +50,7 @@ export function BudgetCard({ progress, onEdit, onDelete }: BudgetCardProps) {
       <div className="mt-3">
         <ProgressBar
           ratio={progress.ratio}
-          label={`${progress.name} budget used`}
+          label={t("{{name}} budget used", { name: progress.name})}
           tone={progress.status}
         />
       </div>

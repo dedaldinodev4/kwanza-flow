@@ -1,5 +1,6 @@
 import { getCategory } from "@/lib/categories";
-import { formatMonth } from "@/lib/formatters/date";
+import { message, MessageParams } from "@/i18n/utils";
+
 import { generateId } from "@/lib/generate-id";
 import { budgetSchema, type AppData, type Budget } from "@/types/domain";
 import type { BudgetInput } from "../schemas/budget-form";
@@ -11,8 +12,11 @@ import type { BudgetInput } from "../schemas/budget-form";
  */
 
 export type BudgetResult =
-  { ok: true; data: AppData; budget: Budget } | { ok: false; error: string };
-export type CopyResult = { ok: true; data: AppData; copied: number } | { ok: false; error: string };
+  { ok: true; data: AppData; budget: Budget } | { ok: false; error: string; params?: MessageParams };
+export type CopyResult =
+  | { ok: true; data: AppData; copied: number }
+  | { ok: false; error: string; params?: MessageParams };
+
 
 interface Context {
   now: string;
@@ -21,9 +25,11 @@ interface Context {
 
 function validate(candidate: Budget): string | null {
   if (getCategory(candidate.categoryId)?.type !== "expense")
-    return "Budgets can only be set for expense categories.";
+    return message("Budgets can only be set for expense categories.");
 
-  return budgetSchema.safeParse(candidate).success ? null : "The budget details are not valid.";
+  return budgetSchema.safeParse(candidate).success
+    ? null
+    : message("The budget details are not valid.");
 }
 
 //* createBudget - create a budget *//
@@ -39,15 +45,16 @@ export function createBudget(data: AppData, input: BudgetInput, ctx: Context): B
     return { ok: false, error };
 
   if (data.budgets.some((b) => b.categoryId === input.categoryId && b.month === input.month)) {
-    const name = getCategory(input.categoryId)?.name ?? "that category";
+    const name = getCategory(input.categoryId)?.name ?? message("that category");
     return {
       ok: false,
-      error: `There is already a ${name} budget for ${formatMonth(input.month)}.`,
+      error: message("There is already a {{category}} budget for {{month}}."),
+      params: { category: name, month: input.month },
     };
   }
 
   if (data.budgets.some((b) => b.id === budget.id))
-    return { ok: false, error: "Duplicate budget id." };
+    return { ok: false, error: message("Duplicate budget id.") };
 
   return {
     ok: true,
@@ -65,7 +72,7 @@ export function updateBudgetLimit(
 ): BudgetResult {
   const existing = data.budgets.find((b) => b.id === id);
   if (!existing)
-    return { ok: false, error: "That budget no longer exists." };
+    return { ok: false, error: message("That budget no longer exists.") };
 
   const updated: Budget = { ...existing, limit, updatedAt: ctx.now };
   const error = validate(updated);
@@ -84,7 +91,7 @@ export function updateBudgetLimit(
 export function deleteBudget(data: AppData, id: string): BudgetResult {
   const existing = data.budgets.find((b) => b.id === id);
   if (!existing)
-    return { ok: false, error: "That budget no longer exists." };
+    return { ok: false, error: message("That budget no longer exists.") };
 
   return {
     ok: true,
@@ -105,19 +112,24 @@ export function copyBudgets(
   if (fromMonth === toMonth)
     return {
       ok: false,
-      error: "Choose a different month to copy from."
+      error: message("Choose a different month to copy from.")
     };
 
   const source = data.budgets.filter((b) => b.month === fromMonth);
   if (source.length === 0)
-    return { ok: false, error: `There are no budgets in ${formatMonth(fromMonth)} to copy.` };
+    return {
+      ok: false,
+      error: message("There are no budgets in {{month}} to copy."),
+      params: { month: fromMonth },
+    };
 
   const taken = new Set(data.budgets.filter((b) => b.month === toMonth).map((b) => b.categoryId));
   const toCopy = source.filter((b) => !taken.has(b.categoryId));
   if (toCopy.length === 0) {
     return {
       ok: false,
-      error: `${formatMonth(toMonth)} already has every budget from ${formatMonth(fromMonth)}.`,
+      error: message("{{month}} already has every budget from {{from}}."),
+      params: { month: toMonth, from: fromMonth },
     };
   }
   const copies: Budget[] = toCopy.map((b) => ({

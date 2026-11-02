@@ -4,10 +4,10 @@ import { useId, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FieldError, Input, Label, Select } from "@/components/ui";
+import { Button, FieldError, Input, Label, Select } from "@/components/ui";
 
 import { categoriesOfType, getCategory } from "@/lib/categories";
 import { formatMonth } from "@/lib/formatters/date";
@@ -17,6 +17,7 @@ import type { Budget } from "@/types/domain";
 
 import { budgetFormSchema, toBudgetInput, type BudgetFormValues } from "../schemas/budget-form";
 import { createBudget, updateBudgetLimit } from "../services/budget-service";
+import { message } from "@/i18n/utils";
 
 export type BudgetFormMode =
   | {
@@ -32,16 +33,17 @@ interface BudgetFormDialogProps {
 }
 
 export function BudgetFormDialog({ mode, onClose }: BudgetFormDialogProps) {
+  const { t } = useTranslation();
   const month = mode?.kind === "create" ? mode.month : mode?.budget.month;
   return (
     <Dialog open={mode !== null} onOpenChange={(open) => !open && onClose()}>
       {mode && month && (
         <DialogContent
-          title={mode.kind === "create" ? "Add budget" : "Edit budget"}
+          title={mode.kind === "create" ? t("Add budget") : t("Edit budget")}
           description={
             mode.kind === "create"
-              ? `Set a spending limit for ${formatMonth(month)}.`
-              : `Change the ${formatMonth(month)} limit. Spending is tracked automatically.`
+              ? t(`Set a spending limit for {{month}}.`, { month: formatMonth(month) })
+              : t(`Change the {{month}} limit. Spending is tracked automatically.`, { month: formatMonth(month) })
           }
         >
           <BudgetForm mode={mode} month={month} onDone={onClose} />
@@ -60,6 +62,7 @@ function BudgetForm({
   month: string;
   onDone: () => void;
 }) {
+  const { t } = useTranslation();
   const uid = useId();
   const { tryMutate } = useAppActions();
   const submitting = useRef(false);
@@ -101,7 +104,7 @@ function BudgetForm({
         return;
       }
       if (!result.ok) toast.warning(`${result.error} Your change is kept for this session only.`);
-      else toast.success(mode.kind === "create" ? "Budget added" : "Budget updated");
+      else toast.success(mode.kind === "create" ? message("Budget added") : message("Budget updated"));
       onDone();
     } catch (error) {
       submitting.current = false;
@@ -113,14 +116,14 @@ function BudgetForm({
     <form onSubmit={(event) => void handleSubmit(onValid)(event)} noValidate className="space-y-5">
       {mode.kind === "create" ? (
         <div>
-          <Label htmlFor={id("category")}>Category</Label>
+          <Label htmlFor={id("category")}>{t("Category")}</Label>
           <Select
             id={id("category")}
             aria-invalid={!!errors.categoryId}
             aria-describedby={errors.categoryId ? id("category-error") : undefined}
             {...register("categoryId")}
           >
-            <option value="">Choose a category</option>
+            <option value="">{t("Choose a category")}</option>
             {available.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -131,15 +134,15 @@ function BudgetForm({
         </div>
       ) : (
         <div>
-          <p className="text-label mb-1.5">Category</p>
+          <p className="text-label mb-1.5">{t("Category")}</p>
           <p className="text-sm">
-            {getCategory(mode.budget.categoryId)?.name ?? "Unknown category"}
+            {getCategory(mode.budget.categoryId)?.name ?? message("Unknown category")}
           </p>
         </div>
       )}
 
       <div>
-        <Label htmlFor={id("limit")}>Monthly limit (Kz)</Label>
+        <Label htmlFor={id("limit")}>{t("Monthly limit")} (Kz)</Label>
         <Input
           id={id("limit")}
           inputMode="decimal"
@@ -152,7 +155,7 @@ function BudgetForm({
           {...register("limit")}
         />
         <p id={id("limit-hint")} className="text-caption text-muted-foreground mt-1.5">
-          The most you plan to spend on this category in {formatMonth(month)}.
+          {t("The most you plan to spend on this category in {{month}}.", { month: formatMonth(month) })}
         </p>
         <FieldError id={id("limit-error")} message={errors.limit?.message} />
       </div>
@@ -168,10 +171,10 @@ function BudgetForm({
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving…" : mode.kind === "create" ? "Add budget" : "Save changes"}
+          {isSubmitting ? t("Saving…") : mode.kind === "create" ? t("Add budget") : t("Save changes")}
         </Button>
       </div>
     </form>

@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Copy, PiggyBank, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import { EmptyState, Skeleton } from "@/components/feedback";
 import { PageHeader } from "@/components/layout/page-header";
@@ -25,6 +26,7 @@ import { BudgetSummary } from "./budget-summary";
 import { MonthSwitcher } from "./month-switcher";
 
 
+
 const BudgetFormDialog = dynamic(
   () => import("./budget-form-dialog").then((m) => m.BudgetFormDialog),
   { ssr: false },
@@ -37,6 +39,7 @@ const DeleteBudgetDialog = dynamic(
 const HEADER = { title: "Budgets", description: "Monthly limits by category." };
 
 export function BudgetsView() {
+  const { t } = useTranslation();
   const state = useAppData();
   const { tryMutate } = useAppActions();
   const { money } = useFormat();
@@ -72,8 +75,11 @@ export function BudgetsView() {
   if (state.status !== "ready" || !view) {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader {...HEADER} />
-        <span className="sr-only">Loading your budgets…</span>
+        <PageHeader
+          title={t("{{title}}", { title: HEADER.title })}
+          description={t("{{description}}", { title: HEADER.description })}
+        />
+        <span className="sr-only">{t("Loading your budgets…")}</span>
         <Skeleton className="h-12 w-72" />
         <Skeleton className="h-40 w-full" />
       </div>
@@ -111,16 +117,20 @@ export function BudgetsView() {
       }
     >
       <Plus aria-hidden className="size-4" />
-      Add budget
+      {t("Add budget")}
     </Button>
   );
 
   return (
     <div className="space-y-6">
-      <PageHeader {...HEADER} actions={addButton} />
+      <PageHeader
+        title={t("{{title}}", { title: HEADER.title })}
+        description={t("{{description}}", { title: HEADER.description })}
+        actions={addButton}
+      />
       {allBudgeted && (
         <p className="text-caption text-muted-foreground -mt-3">
-          Every expense category already has a budget for {monthLabel}.
+          {t("Every expense category already has a budget for {{month}}", { month: monthLabel })}.
         </p>
       )}
 
@@ -129,8 +139,8 @@ export function BudgetsView() {
       {view.progress.length === 0 ? (
         <EmptyState
           icon={PiggyBank}
-          title={`No budgets for ${monthLabel}`}
-          description="A budget is a monthly spending limit for one category. You will see your progress and any overspending as soon as you add one."
+          title={t("No budgets for {{month}}", { month: monthLabel })}
+          description={t("A budget is a monthly spending limit for one category. You will see your progress and any overspending as soon as you add one.")}
         />
       ) : (
         <>
@@ -142,7 +152,7 @@ export function BudgetsView() {
               tabIndex={-1}
               className="text-section mb-3 outline-none"
             >
-              Budgets for {monthLabel}
+              {t("Budgets for {{month}}", { month: monthLabel })}
             </h2>
             <ul className="grid gap-4 md:grid-cols-2">
               {view.progress.map((p) => {
@@ -165,7 +175,7 @@ export function BudgetsView() {
         <div>
           <Button variant="outline" onClick={copyFromPrevious}>
             <Copy aria-hidden className="size-4" />
-            Copy budgets from {previousLabel}
+            {t("Copy budgets from {{label}}", { label: previousLabel })}
           </Button>
         </div>
       )}
@@ -173,9 +183,9 @@ export function BudgetsView() {
       {view.unbudgeted.length > 0 && (
         <Card aria-labelledby="unbudgeted-title">
           <CardHeader
-            title="Spending without a budget"
+            title={t("Spending without a budget")}
             titleId="unbudgeted-title"
-            description={`Spent in ${monthLabel} on categories with no limit set`}
+            description={t("Spent in {{label}} on categories with no limit set", { label: monthLabel })}
           />
           <ul className="divide-y">
             {view.unbudgeted.map((row) => (
