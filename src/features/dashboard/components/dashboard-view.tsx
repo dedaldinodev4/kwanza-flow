@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Wallet } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useTranslation } from "react-i18next";
 
 import { EmptyState } from "@/components/feedback/empty-state";
 import { Skeleton } from "@/components/feedback/skeleton";
@@ -18,22 +19,31 @@ import { GoalsOverview } from "./goals-overview";
 import { KpiCards } from "./kpi-cards";
 import { PeriodSelector } from "./period-selector";
 import { RecentTransactions } from "./recent-transactions";
+import { useLanguage } from "@/providers/i18n-provider";
+import { useIdleReady } from "@/hooks/use-idle-ready";
 
 // Recharts is the heaviest dependency; loading it lazily keeps it out of the initial route bundle.
-const ChartSkeleton = () => <Skeleton className="h-80 w-full" />;
+const ChartSkeleton = ({ wide = false }: { wide?: boolean }) => (
+  <Skeleton className={wide ? "h-80 w-full lg:col-span-2" : "h-80 w-full"} />
+);
+
 const IncomeExpenseChart = dynamic(
   () => import("./income-expense-chart").then((m) => m.IncomeExpenseChart),
-  { ssr: false, loading: ChartSkeleton },
+  { ssr: false, loading: () => <ChartSkeleton wide /> },
 );
+
 const SpendingChart = dynamic(() => import("./spending-chart").then((m) => m.SpendingChart), {
   ssr: false,
-  loading: ChartSkeleton,
+  loading: () => <ChartSkeleton />,
 });
 
+
 export function DashboardSkeleton() {
+  const { t } = useTranslation();
+
   return (
     <div aria-busy="true" aria-live="polite" className="space-y-6">
-      <span className="sr-only">Loading your overview…</span>
+      <span className="sr-only">{t("Loading your overview…")}</span>
       <Skeleton className="h-24 w-full sm:h-12 sm:max-w-md" />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }, (_, i) => (
@@ -49,12 +59,17 @@ export function DashboardSkeleton() {
 }
 
 export function DashboardView() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const state = useAppData();
   const [periodId, setPeriodId] = usePeriodParam();
+  const chartsReady = useIdleReady();
   const model = useMemo(
     () =>
-      state.status === "ready" ? buildDashboardModel(state.data, state.today, periodId) : null,
-    [state, periodId],
+      state.status === "ready"
+        ? buildDashboardModel(state.data, state.today, periodId, language)
+        : null,
+    [state, periodId, language],
   );
 
   if (state.status !== "ready" || !model) return <DashboardSkeleton />;
@@ -63,9 +78,9 @@ export function DashboardView() {
     return (
       <EmptyState
         icon={Wallet}
-        title="No transactions yet"
-        description="Add your first income or expense and your overview will appear here."
-        action={{ href: "/transactions", label: "Go to transactions" }}
+        title={t("No transactions yet")}
+        description={t("Add your first income or expense and your overview will appear here.")}
+        action={{ href: "/transactions", label: t("Go to transactions") }}
       />
     );
   }
@@ -84,12 +99,20 @@ export function DashboardView() {
         periodLabel={model.period.label}
       />
       <div className="grid gap-6 lg:grid-cols-3">
-        <IncomeExpenseChart series={model.series} periodLabel={model.period.label} />
-        <SpendingChart
-          chartRows={model.chartCategories}
-          allRows={model.categories}
-          total={model.summary.expenses}
-        />
+        {chartsReady ? (
+          <IncomeExpenseChart series={model.series} periodLabel={model.period.label} />
+        ) : (
+          <ChartSkeleton wide />
+        )}
+        {chartsReady ? (
+          <SpendingChart
+            chartRows={model.chartCategories}
+            allRows={model.categories}
+            total={model.summary.expenses}
+          />
+        ) : (
+          <ChartSkeleton />
+        )}
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         <RecentTransactions

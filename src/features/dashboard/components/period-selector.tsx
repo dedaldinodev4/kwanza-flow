@@ -1,6 +1,8 @@
 "use client";
 
 import { useId } from "react";
+import { useTranslation } from "react-i18next";
+
 import { PERIOD_IDS, PERIOD_LABELS, type PeriodId } from "@/lib/dates/periods";
 import { cn } from "@/lib/utils";
 
@@ -12,9 +14,11 @@ interface PeriodSelectorProps {
 
 export function PeriodSelector({ value, onChange, description }: PeriodSelectorProps) {
   const name = useId();
+  const { t } = useTranslation();
+
   return (
     <fieldset className="min-w-0">
-      <legend className="sr-only">Reporting period</legend>
+      <legend className="sr-only">{t("Reporting period")}</legend>
       <div className="rounded-control bg-card grid grid-cols-2 gap-1 border p-1 sm:inline-grid sm:grid-flow-col">
         {PERIOD_IDS.map((id) => (
           <label key={id} className="relative">
@@ -34,13 +38,13 @@ export function PeriodSelector({ value, onChange, description }: PeriodSelectorP
                 "peer-focus-visible:outline-ring peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2",
               )}
             >
-              {PERIOD_LABELS[id]}
+              {t(PERIOD_LABELS[id])}
             </span>
           </label>
         ))}
       </div>
       <p aria-live="polite" className="text-caption text-muted-foreground mt-2">
-        Showing {description}
+        {t("Showing {{range}}", { range: description })}
       </p>
     </fieldset>
   );

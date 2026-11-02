@@ -1,6 +1,8 @@
 "use client";
 
 import { BarChart3 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
 import {
   Bar,
   BarChart,
@@ -17,7 +19,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 
 import type { SeriesPoint } from "@/lib/calculations";
 import { useFormat } from "@/providers/use-format";
-import { describeCashFlow } from "../utils/chart-text";
+import { describeCashFlow, shortenWeekLabel } from "../utils/chart-text";
 
 interface IncomeExpenseChartProps {
   series: SeriesPoint[];
@@ -27,24 +29,25 @@ interface IncomeExpenseChartProps {
 const AXIS_TICK = { fill: "var(--muted-foreground)", fontSize: 12 } as const;
 
 export function IncomeExpenseChart({ series, periodLabel }: IncomeExpenseChartProps) {
+  const { t } = useTranslation();
   const { money, net, permille, compact } = useFormat();
   const hasData = series.some((p) => p.income > 0 || p.expenses > 0);
-  const summary = describeCashFlow(series, periodLabel, { money, net, permille });
-  const totalIncome = series.reduce((t, p) => t + p.income, 0);
-  const totalExpenses = series.reduce((t, p) => t + p.expenses, 0);
+  const summary = describeCashFlow(series, periodLabel, { money, net, permille, t });
+  const totalIncome = series.reduce((sum, p) => sum + p.income, 0);
+  const totalExpenses = series.reduce((sum, p) => sum + p.expenses, 0);
 
   return (
     <Card aria-labelledby="cashflow-title" className="lg:col-span-2">
       <CardHeader
-        title="Income vs expenses"
+        title={t("Income vs expenses")}
         titleId="cashflow-title"
-        description="Amounts in kwanza (Kz), grouped by week or month"
+        description={t("Amounts in kwanza (Kz), grouped by week or month")}
       />
       {!hasData ? (
         <EmptyState
           icon={BarChart3}
-          title="Nothing to chart yet"
-          description="There is no income or spending in this period. Try another period."
+          title={t("Nothing to chart yet")}
+          description={t("There is no income or spending in this period. Try another period.")}
         />
       ) : (
         <>
@@ -60,6 +63,8 @@ export function IncomeExpenseChart({ series, periodLabel }: IncomeExpenseChartPr
                 <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
                 <XAxis
                   dataKey="label"
+                  interval={series.length <= 6 ? 0 : "preserveEnd"}
+                  tickFormatter={shortenWeekLabel}
                   tickLine={false}
                   axisLine={{ stroke: "var(--border)" }}
                   tick={AXIS_TICK}
@@ -81,43 +86,47 @@ export function IncomeExpenseChart({ series, periodLabel }: IncomeExpenseChartPr
                     color: "var(--foreground)",
                   }}
                 />
-                <Legend iconType="square" wrapperStyle={{ fontSize: 13 }} />
+                <Legend iconType="square" itemSorter={null} wrapperStyle={{ fontSize: 13 }} />
                 <Bar
                   dataKey="income"
-                  name="Income"
+                  name={t("Income")}
                   fill="var(--chart-1)"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={28}
+                  isAnimationActive={false}
                 />
                 <Bar
                   dataKey="expenses"
-                  name="Expenses"
+                  name={t("Expenses")}
                   fill="var(--chart-2)"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={28}
+                  isAnimationActive={false}
                 />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <details className="mt-3 text-sm">
             <summary className="flex min-h-11 cursor-pointer items-center font-medium">
-              View as table
+              {t("View as table")}
             </summary>
             <div className="overflow-x-auto">
               <table className="money w-full text-left text-sm">
                 <caption className="sr-only">
-                  Income and expenses by {series.length > 6 ? "month" : "period"}
+                  {series.length > 6
+                    ? t("Income and expenses by month")
+                    : t("Income and expenses by period")}
                 </caption>
                 <thead>
                   <tr className="text-caption text-muted-foreground border-b">
                     <th scope="col" className="py-2 pr-4 font-medium">
-                      Period
+                      {t("Period")}
                     </th>
                     <th scope="col" className="py-2 pr-4 text-right font-medium">
-                      Income
+                      {t("Income")}
                     </th>
                     <th scope="col" className="py-2 text-right font-medium">
-                      Expenses
+                      {t("Expenses")}
                     </th>
                   </tr>
                 </thead>
@@ -135,7 +144,7 @@ export function IncomeExpenseChart({ series, periodLabel }: IncomeExpenseChartPr
                 <tfoot>
                   <tr className="font-semibold">
                     <th scope="row" className="py-2 pr-4">
-                      Total
+                      {t("Total")}
                     </th>
                     <td className="py-2 pr-4 text-right">{money(totalIncome)}</td>
                     <td className="py-2 text-right">{money(totalExpenses)}</td>

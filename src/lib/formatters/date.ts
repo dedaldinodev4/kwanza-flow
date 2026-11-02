@@ -7,9 +7,12 @@ import { DEFAULT_LANGUAGE, type Language } from "@/i18n/languages";
 export function formatDay(
   isoDate: string,
   currentYear: string = String(new Date().getFullYear()),
+  language: Language = DEFAULT_LANGUAGE,
 ): string {
   const date = fromIsoDate(isoDate);
-  return format(date, isoDate.startsWith(currentYear) ? "d MMM" : "d MMM yyyy");
+  return format(date, isoDate.startsWith(currentYear) ? "d MMM" : "d MMM yyyy", {
+    locale: dateLocale(language),
+  });
 }
 
 /** "October 2026" for a `YYYY-MM` month; "outubro de 2026" in Portuguese. */

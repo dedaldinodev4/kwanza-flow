@@ -1,4 +1,7 @@
 import { format } from "date-fns";
+
+import { dateLocale } from "@/i18n/date-locale";
+import { DEFAULT_LANGUAGE, type Language } from "@/i18n/languages";
 import { getCategory } from "@/lib/categories";
 import { fromIsoDate, isWithin, monthOf } from "@/lib/dates/iso";
 import type { Period } from "@/lib/dates/periods";
@@ -101,7 +104,8 @@ export interface SeriesPoint {
 
 type Bucket = Pick<SeriesPoint, "key" | "label" | "from" | "to">;
 
-function weekBuckets(period: Pick<Period, "start" | "end">): Bucket[] {
+function weekBuckets(period: Pick<Period, "start" | "end">, language: Language): Bucket[] {
+  const locale = { locale: dateLocale(language) };
   // Weeks run Monday–Sunday and are clipped to the period so edge weeks are partial.
   const buckets: Bucket[] = [];
   let cursor = fromIsoDate(period.start);
@@ -117,24 +121,27 @@ function weekBuckets(period: Pick<Period, "start" | "end">): Bucket[] {
     const from = format(cursor, "yyyy-MM-dd");
     const to = format(last, "yyyy-MM-dd");
     const label =
-      from === to ? format(cursor, "d MMM") : `${format(cursor, "d")}–${format(last, "d MMM")}`;
+      from === to
+        ? format(cursor, "d MMM", locale)
+        : `${format(cursor, "d", locale)}–${format(last, "d MMM", locale)}`;
     buckets.push({ key: from, label, from, to });
     cursor = new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1);
   }
   return buckets;
 }
 
-function monthBuckets(period: Pick<Period, "start" | "end">): Bucket[] {
+function monthBuckets(period: Pick<Period, "start" | "end">, language: Language): Bucket[] {
+  const locale = { locale: dateLocale(language) };
   const months: Bucket[] = [];
   let year = Number(period.start.slice(0, 4));
   let month = Number(period.start.slice(5, 7));
   const last = monthOf(period.end);
-  for (;;) {
+  for (; ;) {
     const key = `${year}-${String(month).padStart(2, "0")}`;
     const daysInMonth = new Date(year, month, 0).getDate();
     const from = `${key}-01`;
     const to = `${key}-${String(daysInMonth).padStart(2, "0")}`;
-    months.push({ key, label: format(new Date(year, month - 1, 1), "MMM"), from, to });
+    months.push({ key, label: format(new Date(year, month - 1, 1), "MMM", locale), from, to });
     if (key >= last) break;
     month += 1;
     if (month > 12) {
@@ -144,7 +151,6 @@ function monthBuckets(period: Pick<Period, "start" | "end">): Bucket[] {
   }
   return months;
 }
-
 /**
  * Income-versus-expense series. A single-month period is bucketed by week, longer
  * periods by month. Totals across all buckets always equal `summarize()` for the period.
@@ -152,9 +158,10 @@ function monthBuckets(period: Pick<Period, "start" | "end">): Bucket[] {
 export function incomeExpenseSeries(
   transactions: readonly Transaction[],
   period: Pick<Period, "start" | "end">,
+  language: Language = DEFAULT_LANGUAGE,
 ): SeriesPoint[] {
   const singleMonth = monthOf(period.start) === monthOf(period.end);
-  const buckets = singleMonth ? weekBuckets(period) : monthBuckets(period);
+  const buckets = singleMonth ? weekBuckets(period, language) : monthBuckets(period, language);
   const points: SeriesPoint[] = buckets.map((b) => ({ ...b, income: 0, expenses: 0 }));
   for (const t of filterByPeriod(transactions, period)) {
     const point = points.find((p) => isWithin(t.date, p.from, p.to));

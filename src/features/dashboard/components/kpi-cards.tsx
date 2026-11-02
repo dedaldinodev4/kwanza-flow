@@ -1,6 +1,8 @@
 "use client";
 
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
 import { formatDay } from "@/lib/formatters/date";
 import { cn } from "@/lib/utils";
 import { useFormat } from "@/providers/use-format";
@@ -45,19 +47,25 @@ function Kpi({ label, hint, value, valueClassName, icon }: KpiProps) {
 }
 
 export function KpiCards({ balance, asOf, summary, periodLabel }: KpiCardsProps) {
-  const { money, net } = useFormat();
+  const { t } = useTranslation();
+  const { money, net, day } = useFormat();
+  const period = t(periodLabel);
   const NetIcon = summary.net > 0 ? TrendingUp : summary.net < 0 ? TrendingDown : Minus;
   const netTone = summary.net > 0 ? "text-success" : summary.net < 0 ? "text-destructive" : "";
 
   return (
-    <section aria-label="Key figures">
+    <section aria-label={t("Key figures")}>
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Current balance" hint={`As of ${formatDay(asOf)}`} value={money(balance)} />
-        <Kpi label="Income" hint={periodLabel} value={money(summary.income)} />
-        <Kpi label="Expenses" hint={periodLabel} value={money(summary.expenses)} />
         <Kpi
-          label="Net cash flow"
-          hint={periodLabel}
+          label={t("Current balance")}
+          hint={t("As of {{date}}", { date: day(asOf) })}
+          value={money(balance)}
+        />
+        <Kpi label={t("Income")} hint={period} value={money(summary.income)} />
+        <Kpi label={t("Expenses")} hint={period} value={money(summary.expenses)} />
+        <Kpi
+          label={t("Net cash flow")}
+          hint={period}
           value={net(summary.net)}
           valueClassName={netTone}
           icon={<NetIcon aria-hidden className={cn("size-4", netTone)} />}

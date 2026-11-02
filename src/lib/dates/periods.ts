@@ -1,4 +1,7 @@
 import { format } from "date-fns";
+import { dateLocale } from "@/i18n/date-locale";
+import { DEFAULT_LANGUAGE, type Language } from "@/i18n/languages";
+import { message } from "@/i18n/utils";
 import { fromIsoDate, monthOf, monthRange, monthsBetween, shiftMonth } from "./iso";
 
 //* PERIOD *//
@@ -13,10 +16,10 @@ export interface Period {
 }
 
 export const PERIOD_LABELS: Record<PeriodId, string> = {
-  "this-month": "This month",
-  "last-month": "Last month",
-  "last-3-months": "Last 3 months",
-  "this-year": "This year",
+  "this-month": message("This month"),
+  "last-month": message("Last month"),
+  "last-3-months": message("Last 3 months"),
+  "this-year": message("This year"),
 };
 
 export function resolvePeriod(id: PeriodId, today: string): Period {
@@ -51,12 +54,16 @@ export function monthsInPeriod(period: Pick<Period, "start" | "end">): string[] 
 }
 
 //* "1 – 31 Oct 2026" or "1 Aug – 31 Oct 2026" for display under the period selector. *//
-export function describePeriod(period: Pick<Period, "start" | "end">): string {
+export function describePeriod(
+  period: Pick<Period, "start" | "end">,
+  language: Language = DEFAULT_LANGUAGE,
+): string {
+  const locale = { locale: dateLocale(language) };
   const start = fromIsoDate(period.start);
   const end = fromIsoDate(period.end);
   if (monthOf(period.start) === monthOf(period.end)) {
-    return `${format(start, "d")} – ${format(end, "d MMM yyyy")}`;
+    return `${format(start, "d", locale)} – ${format(end, "d MMM yyyy", locale)}`;
   }
   const sameYear = period.start.slice(0, 4) === period.end.slice(0, 4);
-  return `${format(start, sameYear ? "d MMM" : "d MMM yyyy")} – ${format(end, "d MMM yyyy")}`;
+  return `${format(start, sameYear ? "d MMM" : "d MMM yyyy", locale)} – ${format(end, "d MMM yyyy", locale)}`;
 }

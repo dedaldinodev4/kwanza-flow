@@ -1,3 +1,4 @@
+import { DEFAULT_LANGUAGE, type Language } from "@/i18n/languages";
 import {
   accountBalance,
   budgetProgressForPeriod,
@@ -48,6 +49,7 @@ export function buildDashboardModel(
   data: AppData,
   today: string,
   periodId: PeriodId,
+  language: Language = DEFAULT_LANGUAGE,
 ): DashboardModel {
   const period = resolvePeriod(periodId, today);
   const inPeriod = filterByPeriod(data.transactions, period);
@@ -56,10 +58,10 @@ export function buildDashboardModel(
 
   return {
     period,
-    periodDescription: describePeriod(period),
+    periodDescription: describePeriod(period, language),
     balance: accountBalance(data.preferences.openingBalance, data.transactions, today),
     summary: summarize(inPeriod),
-    series: incomeExpenseSeries(data.transactions, period),
+    series: incomeExpenseSeries(data.transactions, period, language),
     categories,
     chartCategories: groupSmallCategories(categories, MAX_DONUT_SLICES),
     recent: recentTransactions(inPeriod, RECENT_LIMIT),

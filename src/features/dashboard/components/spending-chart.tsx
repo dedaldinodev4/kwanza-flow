@@ -1,6 +1,7 @@
 "use client";
 
 import { PieChartIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import { EmptyState } from "@/components/feedback/empty-state";
@@ -26,22 +27,28 @@ const SLICE_COLORS = [
 ];
 
 export function SpendingChart({ chartRows, allRows, total }: SpendingChartProps) {
+  const { t } = useTranslation();
   const { money, net, permille } = useFormat();
-  const summary = describeSpending(allRows, { money, net, permille });
-  const data = chartRows.map((row, i) => ({ ...row, fill: SLICE_COLORS[i % SLICE_COLORS.length] }));
+  const summary = describeSpending(allRows, { money, net, permille, t });
+  const data = chartRows.map((row, i) => ({
+    ...row,
+    name: t(row.name),
+    fill: SLICE_COLORS[i % SLICE_COLORS.length],
+  }));
+
 
   return (
     <Card aria-labelledby="spending-title">
       <CardHeader
-        title="Spending by category"
+        title={t("Spending by category")}
         titleId="spending-title"
-        description="Share of total expenses"
+        description={t("Share of total expenses")}
       />
       {allRows.length === 0 ? (
         <EmptyState
           icon={PieChartIcon}
-          title="No expenses in this period"
-          description="Once you record spending, it is broken down by category here."
+          title={t("No expenses in this period")}
+          description={t("Once you record spending, it is broken down by category here.")}
         />
       ) : (
         <>
@@ -78,7 +85,7 @@ export function SpendingChart({ chartRows, allRows, total }: SpendingChartProps)
               className="pointer-events-none absolute inset-0 grid place-items-center text-center"
             >
               <div>
-                <p className="text-caption text-muted-foreground">Total</p>
+                <p className="text-caption text-muted-foreground">{t("Total")}</p>
                 <p className="money text-sm font-semibold">{money(total, { fractionDigits: 0 })}</p>
               </div>
             </div>
@@ -109,12 +116,12 @@ export function SpendingChart({ chartRows, allRows, total }: SpendingChartProps)
           {allRows.length > chartRows.length && (
             <details className="mt-2 text-sm">
               <summary className="flex min-h-11 cursor-pointer items-center font-medium">
-                All categories
+                {t("All categories")}
               </summary>
               <ul className="money space-y-1.5 pb-1">
                 {allRows.map((row) => (
                   <li key={row.categoryId} className="flex justify-between gap-3">
-                    <span>{row.name}</span>
+                    <span>{t(row.name)}</span>
                     <span>
                       {money(row.amount)} · {permille(row.permille)}
                     </span>
