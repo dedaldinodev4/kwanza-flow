@@ -1,5 +1,6 @@
 import { getCategory } from "@/lib/categories";
 import { generateId } from "@/lib/generate-id";
+import { message } from "@/i18n/utils";
 import { transactionSchema, type AppData, type Transaction } from "@/types/domain";
 import type { TransactionInput } from "../schemas/transaction-form";
 
@@ -20,16 +21,14 @@ interface Context {
 //* validate transaction *//
 function validate(candidate: Transaction): string | null {
   const category = getCategory(candidate.categoryId);
-  if (!category) {
-    return "That category does not exist.";
-  }
+  if (!category) 
+    return message("That category does not exist.");
 
-  if (category.type !== candidate.type) {
-    return `That category cannot be used for ${candidate.type}.`;
-  }
+  if (category.type !== candidate.type)
+    return message("That category cannot be used for this type of transaction.");
 
   const parsed = transactionSchema.safeParse(candidate);
-  return parsed.success ? null : "The transaction details are not valid.";
+  return parsed.success ? null : message("The transaction details are not valid.");
 }
 
 //* creteTransaction - create a transaction *//
@@ -49,7 +48,7 @@ export function createTransaction(
     return { ok: false, error };
 
   if (data.transactions.some((t) => t.id === transaction.id))
-    return { ok: false, error: "Duplicate transaction id." };
+    return { ok: false, error: message("Duplicate transaction id.") };
 
   return {
     ok: true,
@@ -70,7 +69,7 @@ export function updateTransaction(
   if (!existing)
     return {
       ok: false,
-      error: "That transaction no longer exists."
+      error: message("That transaction no longer exists.")
     };
 
   const updated: Transaction = {
@@ -97,7 +96,7 @@ export function deleteTransaction(data: AppData, id: string): ServiceResult {
   if (!existing)
     return {
       ok: false,
-      error: "That transaction no longer exists."
+      error: message("That transaction no longer exists.")
     };
     
   return {

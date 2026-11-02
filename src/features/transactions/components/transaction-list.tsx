@@ -1,10 +1,12 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 
 import { getCategory } from "@/lib/categories";
+import { useCategoryName, useDemoText } from "@/hooks/use-i18n";
 import { formatDay } from "@/lib/formatters/date";
 import { cn } from "@/lib/utils";
 import { useFormat } from "@/providers/use-format";
@@ -17,41 +19,46 @@ interface TransactionListProps {
   onDelete: (t: Transaction) => void;
 }
 
-function Amount({ t }: { t: Transaction }) {
+function Amount({ tx }: { tx: Transaction }) {
+  const { t } = useTranslation();
   const { signed } = useFormat();
   return (
     <span
       className={cn(
         "money font-semibold",
-        t.type === "income" ? "text-success" : "text-destructive",
+        tx.type === "income" ? "text-success" : "text-destructive",
       )}
     >
-      <span className="sr-only">{t.type === "income" ? "Income: " : "Expense: "}</span>
-      {signed(t.amount, t.type)}
+      <span className="sr-only">{t(tx.type === "income" ? "Income" : "Expense")}: </span>
+      {signed(tx.amount, tx.type)}
     </span>
   );
 }
 
 function Actions({
-  t,
+  tx,
   onEdit,
   onDelete,
-}: Pick<TransactionListProps, "onEdit" | "onDelete"> & { t: Transaction }) {
+}: Pick<TransactionListProps, "onEdit" | "onDelete"> & { tx: Transaction }) {
+  const { t } = useTranslation();
+  const demoText = useDemoText();
+  const name = demoText(tx.description);
+
   return (
     <div className="flex items-center gap-1">
       <Button
         variant="ghost"
         size="icon"
-        aria-label={`Edit ${t.description}`}
-        onClick={() => onEdit(t)}
+        aria-label={t("Edit {{name}}", { name })}
+        onClick={() => onEdit(tx)}
       >
         <Pencil aria-hidden className="size-4" />
       </Button>
       <Button
         variant="ghost"
         size="icon"
-        aria-label={`Delete ${t.description}`}
-        onClick={() => onDelete(t)}
+        aria-label={t("Delete {{name}}", { name })}
+        onClick={() => onDelete(tx)}
       >
         <Trash2 aria-hidden className="size-4" />
       </Button>
@@ -61,54 +68,62 @@ function Actions({
 
 
 export function TransactionList({ transactions, today, onEdit, onDelete }: TransactionListProps) {
+  const { t } = useTranslation();
+  const { day } = useFormat();
+  const categoryName = useCategoryName();
+  const demoText = useDemoText();
   const year = today.slice(0, 4);
-  const categoryName = (id: string) => getCategory(id)?.name ?? "Unknown category";
 
   return (
     <>
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-left text-sm">
-          <caption className="sr-only">Transactions</caption>
+          <caption className="sr-only">{t("Transactions")}</caption>
           <thead>
             <tr className="text-caption text-muted-foreground border-b">
               <th scope="col" className="py-3 pr-4 font-medium">
-                Date
+                {t("Date")}
               </th>
               <th scope="col" className="py-3 pr-4 font-medium">
-                Description
+                {t("Description")}
               </th>
               <th scope="col" className="py-3 pr-4 font-medium">
-                Category
+                {t("Category")}
               </th>
               <th scope="col" className="py-3 pr-4 text-right font-medium">
-                Amount
+                {t("Amount")}
               </th>
               <th scope="col" className="py-3 text-right font-medium">
-                <span className="sr-only">Actions</span>
+                <span className="sr-only">{t("Actions")}</span>
               </th>
             </tr>
           </thead>
           <tbody>
-            {transactions.map((t) => (
-              <tr key={t.id} className="border-b last:border-0">
-                <td className="text-muted-foreground py-2 pr-4 whitespace-nowrap">
-                  {formatDay(t.date, year)}
+            {transactions.map((tx) => (
+              <tr key={tx.id} className="border-b last:border-0">
+                <td className="text-muted-foreground py-[calc(var(--row-pad)-0.25rem)] pr-4 whitespace-nowrap">
+                  {day(tx.date, year)}
                 </td>
-                <th scope="row" className="max-w-xs py-2 pr-4 font-medium">
-                  <span className="block truncate">{t.description}</span>
-                  {t.notes && (
+                <th
+                  scope="row"
+                  className="max-w-xs py-[calc(var(--row-pad)-0.25rem)] pr-4 font-medium"
+                >
+                  <span className="block truncate">{demoText(tx.description)}</span>
+                  {tx.notes && (
                     <span className="text-caption text-muted-foreground block truncate font-normal">
-                      {t.notes}
+                      {tx.notes}
                     </span>
                   )}
                 </th>
-                <td className="py-2 pr-4 whitespace-nowrap">{categoryName(t.categoryId)}</td>
-                <td className="py-2 pr-4 text-right whitespace-nowrap">
-                  <Amount t={t} />
+                <td className="py-[calc(var(--row-pad)-0.25rem)] pr-4 whitespace-nowrap">
+                  {categoryName(tx.categoryId)}
                 </td>
-                <td className="py-2">
+                <td className="py-[calc(var(--row-pad)-0.25rem)] pr-4 text-right whitespace-nowrap">
+                  <Amount tx={tx} />
+                </td>
+                <td className="py-[calc(var(--row-pad)-0.25rem)]">
                   <div className="flex justify-end">
-                    <Actions t={t} onEdit={onEdit} onDelete={onDelete} />
+                    <Actions tx={tx} onEdit={onEdit} onDelete={onDelete} />
                   </div>
                 </td>
               </tr>
@@ -117,20 +132,20 @@ export function TransactionList({ transactions, today, onEdit, onDelete }: Trans
         </table>
       </div>
 
-      <ul aria-label="Transactions" className="divide-y md:hidden">
-        {transactions.map((t) => (
-          <li key={t.id} className="py-3">
+      <ul aria-label={t("Transactions")} className="divide-y md:hidden">
+        {transactions.map((tx) => (
+          <li key={tx.id} className="py-(--row-pad)">
             <div className="flex items-start justify-between gap-3">
-              <p className="min-w-0 truncate text-sm font-medium">{t.description}</p>
+              <p className="min-w-0 truncate text-sm font-medium">{demoText(tx.description)}</p>
               <p className="shrink-0 text-sm">
-                <Amount t={t} />
+                <Amount tx={tx} />
               </p>
             </div>
             <div className="flex items-center justify-between gap-3">
               <p className="text-caption text-muted-foreground min-w-0 truncate">
-                {categoryName(t.categoryId)} · {formatDay(t.date, year)}
+                {categoryName(tx.categoryId)} · {day(tx.date, year)}
               </p>
-              <Actions t={t} onEdit={onEdit} onDelete={onDelete} />
+              <Actions tx={tx} onEdit={onEdit} onDelete={onDelete} />
             </div>
           </li>
         ))}

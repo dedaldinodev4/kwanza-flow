@@ -4,12 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FieldError, Input, Label, Select, Textarea } from "@/components/ui";
+import { Button, FieldError, Input, Label, Select, Textarea } from "@/components/ui";
+
 import { categoriesOfType, getCategory } from "@/lib/categories";
 import { todayIso } from "@/lib/dates/iso";
 import { formatMinorForInput } from "@/lib/money/parse-money";
+
 import { useAppActions, useAppData } from "@/providers/app-data-provider";
 import type { Transaction, TransactionType } from "@/types/domain";
 import {
@@ -19,6 +21,8 @@ import {
   type TransactionFormValues,
 } from "../schemas/transaction-form";
 import { createTransaction, updateTransaction } from "../services/transaction-service";
+import { useTranslation } from "react-i18next";
+import { message } from "@/i18n/utils";
 
 export type FormMode = { kind: "create" } | { kind: "edit"; transaction: Transaction };
 
@@ -28,15 +32,16 @@ interface TransactionFormDialogProps {
 }
 
 export function TransactionFormDialog({ mode, onClose }: TransactionFormDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={mode !== null} onOpenChange={(open) => !open && onClose()}>
       {mode && (
         <DialogContent
-          title={mode.kind === "create" ? "Add transaction" : "Edit transaction"}
+          title={mode.kind === "create" ? t("Add transaction") : t("Edit transaction")}
           description={
             mode.kind === "create"
-              ? "Record an income or an expense. Amounts are in kwanza (Kz)."
-              : "Update the details. Your totals, charts and budgets update automatically."
+              ? t("Record an income or an expense. Amounts are in kwanza (Kz).")
+              : t("Update the details. Your totals, charts and budgets update automatically.")
           }
         >
           {/* Mounted only while open, so every opening starts from fresh default values. */}
@@ -65,6 +70,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
   const state = useAppData();
   const { tryMutate } = useAppActions();
   const submitting = useRef(false);
+  const { t } = useTranslation();
 
   const today = state.status === "ready" ? state.today : todayIso();
   const {
@@ -107,9 +113,9 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
         return;
       }
       if (!result.ok) {
-        toast.warning(`${result.error} Your change is kept for this session only.`);
+        toast.warning(message(`${result.error} Your change is kept for this session only.`));
       } else {
-        toast.success(mode.kind === "create" ? "Transaction added" : "Transaction updated");
+        toast.success(mode.kind === "create" ? message("Transaction added") : message("Transaction updated"));
       }
       onDone();
     } catch (error) {
@@ -138,7 +144,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
                 })}
               />
               <span className="transition-ui text-muted-foreground peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-card peer-focus-visible:outline-ring flex min-h-11 cursor-pointer items-center justify-center rounded-lg text-sm font-medium peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
-                {TYPE_LABELS[option]}
+                {t(TYPE_LABELS[option])}
               </span>
             </label>
           ))}
@@ -146,7 +152,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
       </fieldset>
 
       <div>
-        <Label htmlFor={id("description")}>Description</Label>
+        <Label htmlFor={id("description")}>{t("Description")}</Label>
         <Input
           id={id("description")}
           autoComplete="off"
@@ -159,7 +165,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <Label htmlFor={id("amount")}>Amount (Kz)</Label>
+          <Label htmlFor={id("amount")}>{t("Amount")} (Kz)</Label>
           <Input
             id={id("amount")}
             inputMode="decimal"
@@ -170,12 +176,12 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
             {...register("amount")}
           />
           <p id={id("amount-hint")} className="text-caption text-muted-foreground mt-1.5">
-            Use a comma for cêntimos.
+           {t("Use a comma for cêntimos.")}
           </p>
           <FieldError id={id("amount-error")} message={errors.amount?.message} />
         </div>
         <div>
-          <Label htmlFor={id("date")}>Date</Label>
+          <Label htmlFor={id("date")}>{t("Date")}</Label>
           <Input
             id={id("date")}
             type="date"
@@ -188,14 +194,14 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
       </div>
 
       <div>
-        <Label htmlFor={id("category")}>Category</Label>
+        <Label htmlFor={id("category")}>{t("Category")}</Label>
         <Select
           id={id("category")}
           aria-invalid={!!errors.categoryId}
           aria-describedby={describedBy("categoryId")}
           {...register("categoryId")}
         >
-          <option value="">Choose a category</option>
+          <option value="">{t("Choose a category")}</option>
           {categoriesOfType(type).map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -207,7 +213,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
 
       <div>
         <Label htmlFor={id("notes")}>
-          Notes <span className="text-muted-foreground font-normal">(optional)</span>
+          {t("Notes")} <span className="text-muted-foreground font-normal">(optional)</span>
         </Label>
         <Textarea
           id={id("notes")}
@@ -229,10 +235,10 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving…" : mode.kind === "create" ? "Add transaction" : "Save changes"}
+          {isSubmitting ? t("Saving…") : mode.kind === "create" ? t("Add transaction") : t("Save changes")}
         </Button>
       </div>
     </form>

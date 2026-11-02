@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { ArrowLeftRight, Plus, SearchX } from "lucide-react";
 
 import { EmptyState, Skeleton } from "@/components/feedback";
@@ -19,6 +20,8 @@ import { Pagination } from "./pagination";
 import { TransactionFilters } from "./transaction-filters";
 import type { FormMode } from "./transaction-form-dialog";
 import { TransactionList } from "./transaction-list";
+import { message } from "@/i18n/utils";
+import { title } from "process";
 
 
 const TransactionFormDialog = dynamic(
@@ -37,6 +40,7 @@ const HEADER = {
 
 export function TransactionsView() {
   const state = useAppData();
+  const { t } = useTranslation();
   const { tryMutate } = useAppActions();
   const [query, dispatch] = useTransactionQuery();
   const [formMode, setFormMode] = useState<FormMode | null>(null);
@@ -53,8 +57,8 @@ export function TransactionsView() {
   if (state.status !== "ready" || !result) {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader {...HEADER} />
-        <span className="sr-only">Loading your transactions…</span>
+        <PageHeader title={t(HEADER.title)} description={t(HEADER.description)} />
+        <span className="sr-only">{t("Loading your transactions…")}</span>
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-72 w-full" />
       </div>
@@ -64,16 +68,16 @@ export function TransactionsView() {
   function confirmDelete(target: Transaction) {
     const outcome = tryMutate((data) => deleteTransaction(data, target.id));
     deleted.current = true; // after a delete, focus moves to the results summary (the row is gone)
-    if (outcome.ok) toast.success("Transaction deleted");
+    if (outcome.ok) toast.success(message("Transaction deleted"));
     else if (outcome.reason === "not-saved")
-      toast.warning(`${outcome.error} The deletion is kept for this session only.`);
+      toast.warning(message(`${outcome.error} The deletion is kept for this session only.`));
     else toast.error(outcome.error);
   }
 
   const addButton = (
     <Button onClick={() => setFormMode({ kind: "create" })}>
       <Plus aria-hidden className="size-4" />
-      Add transaction
+      {t("Add transaction")}
     </Button>
   );
 
@@ -89,8 +93,8 @@ export function TransactionsView() {
       {state.data.transactions.length === 0 ? (
         <EmptyState
           icon={ArrowLeftRight}
-          title="No transactions yet"
-          description="Add your first income or expense to start tracking your money."
+          title={t("No transactions yet")}
+          description={t("Add your first income or expense to start tracking your money.")}
         />
       ) : (
         <>
@@ -112,13 +116,13 @@ export function TransactionsView() {
                 icon={SearchX}
                 title={
                   query.search.trim()
-                    ? `No matches for “${query.search.trim()}”`
-                    : "No matching transactions"
+                    ? message(`No matches for “${query.search.trim()}”`)
+                    : message("No matching transactions")
                 }
                 description={
                   result.rangeError
-                    ? "Fix the date range to see results."
-                    : "Try different words, or clear the filters to see everything."
+                    ? message("Fix the date range to see results.")
+                    : message("Try different words, or clear the filters to see everything.")
                 }
               />
             ) : (

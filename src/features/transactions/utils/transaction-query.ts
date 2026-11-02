@@ -1,12 +1,13 @@
 import { compareTransactionsNewestFirst } from "@/lib/calculations";
+import { message } from "@/i18n/utils";
 import type { Transaction, TransactionType } from "@/types/domain";
 
 export const SORT_OPTIONS = [
-  { value: "date-desc", label: "Newest first" },
-  { value: "date-asc", label: "Oldest first" },
-  { value: "amount-desc", label: "Amount: high to low" },
-  { value: "amount-asc", label: "Amount: low to high" },
-  { value: "description-asc", label: "Description: A to Z" },
+  { value: "date-desc", label: message("Newest first") },
+  { value: "date-asc", label: message("Oldest first") },
+  { value: "amount-desc", label: message("Amount: high to low") },
+  { value: "amount-asc", label: message("Amount: low to high") },
+  { value: "description-asc", label: message("Description: A to Z") },
 ] as const;
 
 export type SortKey = (typeof SORT_OPTIONS)[number]["value"];
@@ -84,7 +85,9 @@ export function queryTransactions(
 ): QueryResult {
   const active = hasActiveFilters(q);
   const rangeError =
-    q.from && q.to && q.from > q.to ? "The start date must be on or before the end date." : null;
+    q.from && q.to && q.from > q.to
+      ? message("The start date must be on or before the end date.")
+      : null;
 
   const needle = normalizeText(q.search);
   const matches = rangeError

@@ -1,4 +1,6 @@
 import { z } from "zod";
+
+import { message } from "@/i18n/utils";
 import { getCategory } from "@/lib/categories";
 import { MAX_MINOR_UNITS } from "@/constants";
 import { parseMoneyInput } from "@/lib/money/parse-money";
@@ -12,12 +14,12 @@ export const transactionFormSchema = z
     description: z
       .string()
       .trim()
-      .min(1, "Enter a description.")
-      .max(120, "Use 120 characters or fewer."),
-    amount: z.string().trim().min(1, "Enter an amount."),
-    categoryId: z.string().min(1, "Choose a category."),
-    date: z.string().min(1, "Choose a date."),
-    notes: z.string().trim().max(500, "Use 500 characters or fewer."),
+      .min(1, message("Enter a description."))
+      .max(120, message("Use 120 characters or fewer.")),
+    amount: z.string().trim().min(1, message("Enter an amount.")),
+    categoryId: z.string().min(1, message("Choose a category.")),
+    date: z.string().min(1, message("Choose a date.")),
+    notes: z.string().trim().max(500, message("Use 500 characters or fewer.")),
   })
   .superRefine((values, ctx) => {
     if (values.amount.length > 0) {
@@ -26,16 +28,16 @@ export const transactionFormSchema = z
         ctx.addIssue({
           code: "custom",
           path: ["amount"],
-          message: "Enter a valid amount, for example 1.500,50.",
+          message: message("Enter a valid amount, for example 1.500,50."),
         });
       } else if (minor <= 0) {
         ctx.addIssue({
           code: "custom",
           path: ["amount"],
-          message: "Amount must be greater than zero.",
+          message: message("Amount must be greater than zero."),
         });
       } else if (minor > MAX_MINOR_UNITS) {
-        ctx.addIssue({ code: "custom", path: ["amount"], message: "That amount is too large." });
+        ctx.addIssue({ code: "custom", path: ["amount"], message: message("That amount is too large.") });
       }
     }
 
@@ -45,7 +47,7 @@ export const transactionFormSchema = z
         ctx.addIssue({
           code: "custom",
           path: ["categoryId"],
-          message: `Choose an ${values.type} category.`,
+          message: message(`Choose an ${values.type} category.`),
         });
       }
     }
@@ -53,12 +55,16 @@ export const transactionFormSchema = z
     if (values.date.length > 0) {
       const valid = isoDateSchema.safeParse(values.date).success;
       const year = Number(values.date.slice(0, 4));
-      if (!valid) ctx.addIssue({ code: "custom", path: ["date"], message: "Enter a valid date." });
+      if (!valid) ctx.addIssue({ 
+        code: "custom", 
+        path: ["date"], 
+        message: message("Enter a valid date.") 
+      });
       else if (year < 2000 || year > 2100) {
         ctx.addIssue({
           code: "custom",
           path: ["date"],
-          message: "Choose a date between 2000 and 2100.",
+          message: message("Choose a date between 2000 and 2100."),
         });
       }
     }
