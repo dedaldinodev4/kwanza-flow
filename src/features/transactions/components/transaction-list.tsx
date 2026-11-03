@@ -4,10 +4,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui";
-
-import { getCategory } from "@/lib/categories";
 import { useCategoryName, useDemoText } from "@/hooks/use-i18n";
-import { formatDay } from "@/lib/formatters/date";
 import { cn } from "@/lib/utils";
 import { useFormat } from "@/providers/use-format";
 import type { Transaction } from "@/types/domain";

@@ -59,7 +59,6 @@ describe("first run and round trip", () => {
 });
 
 describe("rejected stored data is recovered safely, never silently discarded", () => {
-  
   const cases: [string, string, RegExp][] = [
     ["malformed JSON", "{not json", /invalid JSON/],
     ["a non-object value", "123", /unexpected format/],
@@ -81,7 +80,10 @@ describe("rejected stored data is recovered safely, never silently discarded", (
     const { repo, storage } = setup({ [STORAGE_KEY]: raw });
     const result = repo.load(TODAY);
     expect(result.notice).toMatchObject({ kind: "recovered" });
-    expect(result.notice?.message).toMatch(reason);
+    expect(result.notice).toMatchObject({
+      kind: "recovered",
+      reason: expect.stringMatching(reason),
+    });
     expect(result.data).toEqual(buildMockData(TODAY));
     expect(storage.dump()[BACKUP_KEY]).toBe(raw); // the rejected copy is preserved
     expect(parseStoredData(storage.dump()[STORAGE_KEY]).ok).toBe(true); // and storage is healthy again
@@ -91,7 +93,10 @@ describe("rejected stored data is recovered safely, never silently discarded", (
     const data = buildMockData(TODAY);
     const bad = { ...data, transactions: [makeTx({ categoryId: "ghost" })] };
     const { repo } = setup({ [STORAGE_KEY]: envelope(bad) });
-    expect(repo.load(TODAY).notice?.message).toMatch(/inconsistent/);
+    expect(repo.load(TODAY).notice).toMatchObject({
+      reason: expect.stringMatching(/inconsistent/),
+      params: { detail: expect.stringContaining("ghost") },
+    });
   });
 
   it("still recovers when the backup cannot be written", () => {
@@ -131,7 +136,6 @@ describe("migrations", () => {
 });
 
 describe("storage failures give clear feedback and the app keeps working", () => {
-  
   it("works in memory when storage is entirely unavailable", () => {
     const repo = createStorageRepository({ getStorage: () => null, buildDefault: buildMockData });
     const result = repo.load(TODAY);
@@ -160,11 +164,9 @@ describe("storage failures give clear feedback and the app keeps working", () =>
     expect(result.data.transactions.length).toBeGreaterThan(0);
     expect(result.notice).toMatchObject({ kind: "unavailable" });
   });
-
 });
 
 describe("reset", () => {
-  
   it("replaces user changes with fresh demo data", () => {
     const { repo } = setup();
     const data = buildMockData(TODAY);

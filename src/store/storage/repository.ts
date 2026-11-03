@@ -37,17 +37,17 @@ export function parseStoredData(
   try {
     envelope = JSON.parse(raw);
   } catch {
-    return { ok: false, reason: "The saved data could not be read (invalid JSON)." };
+    return { ok: false, reason: message("The saved data could not be read (invalid JSON).") };
   }
   if (typeof envelope !== "object" || envelope === null) {
-    return { ok: false, reason: "The saved data had an unexpected format." };
+    return { ok: false, reason: message("The saved data had an unexpected format.") };
   }
   const { version, data } = envelope as { version?: unknown; data?: unknown };
   if (typeof version !== "number" || !Number.isInteger(version) || version < 1) {
-    return { ok: false, reason: "The saved data has no valid version." };
+    return { ok: false, reason: message("The saved data has no valid version.") };
   }
   if (version > currentVersion) {
-    return { ok: false, reason: "The saved data comes from a newer version of the app." };
+    return { ok: false, reason: message("The saved data comes from a newer version of the app.") };
   }
 
   let current: unknown = data;
@@ -105,14 +105,14 @@ export function createStorageRepository(options: {
   function save(data: AppData): SaveResult {
     const storage = getStorage();
     if (!storage)
-      return { ok: false, error: "Browser storage is unavailable, so changes will not be kept." };
+      return { ok: false, error: message("Browser storage is unavailable, so changes will not be kept.") };
     try {
       storage.setItem(STORAGE_KEY, serialize(data));
       return { ok: true };
     } catch {
       return {
         ok: false,
-        error: "Browser storage is full or blocked, so changes could not be saved.",
+        error: message("Browser storage is full or blocked, so changes could not be saved."),
       };
     }
   }
@@ -159,7 +159,10 @@ export function createStorageRepository(options: {
       if (raw === null) return seed(today, null); // first run
 
       const parsed = parseStoredData(raw, migrations);
-      if (parsed.ok) return { data: parsed.data, notice: null };
+      if (parsed.ok) return { 
+        data: parsed.data, 
+        notice: null 
+      };
 
       // Never destroy data silently: keep the rejected copy so it can be inspected or recovered.
       try {

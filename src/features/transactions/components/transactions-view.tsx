@@ -21,7 +21,6 @@ import { TransactionFilters } from "./transaction-filters";
 import type { FormMode } from "./transaction-form-dialog";
 import { TransactionList } from "./transaction-list";
 import { message } from "@/i18n/utils";
-import { title } from "process";
 
 
 const TransactionFormDialog = dynamic(

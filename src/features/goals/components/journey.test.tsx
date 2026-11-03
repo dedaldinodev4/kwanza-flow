@@ -4,8 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DashboardView } from "@/features/dashboard/components/dashboard-view";
 import { GoalsView } from "@/features/goals/components/goals-view";
-import { buildMockData } from "@/mocks/mock-data";
-import { renderWithData, TODAY } from "@/test/render";
+import { renderWithData } from "@/test/render";
 
 
 vi.mock("sonner", () => ({
@@ -19,7 +18,6 @@ vi.mock("next/navigation", () => ({
 }));
 
 
-const data = buildMockData(TODAY);
 const dashboardGoals = () => screen.getByRole("region", { name: "Savings goals" });
 const valueNow = (el: HTMLElement) => Number(el.getAttribute("aria-valuenow"));
 

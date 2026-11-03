@@ -3,7 +3,6 @@
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { formatDay } from "@/lib/formatters/date";
 import { cn } from "@/lib/utils";
 import { useFormat } from "@/providers/use-format";
 import type { CashFlowSummary } from "@/lib/calculations";
