@@ -18,8 +18,8 @@ export type AppState =
 const LOADING: AppState = { status: "loading" };
 
 export type MutationResult =
-  { ok: true } | { ok: false; error: string; reason: "rejected" | "not-saved" };
-
+  | { ok: true }
+  | { ok: false; error: string; params?: MessageParams; reason: "rejected" | "not-saved" };
 
 export type Outcome =
   { ok: true; data: AppData } | { ok: false; error: string; params?: MessageParams };
