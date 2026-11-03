@@ -11,7 +11,7 @@ describe("updatePreferences", () => {
     if (!result.ok) throw new Error("expected ok");
     expect(result.data.preferences).toMatchObject({
       locale: "en-US",
-      density: "compact",
+      density: "compact",  
       displayName: "Demo user",
     });
     expect(result.data.transactions).toBe(data.transactions);

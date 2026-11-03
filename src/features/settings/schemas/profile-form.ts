@@ -11,7 +11,7 @@ export const profileFormSchema = z
       .trim()
       .min(1, message("Enter a name."))
       .max(60, message("Use 60 characters or fewer.")),
-    openingBalance: z.string().trim().min(1, message("Enter an opening balance (0 is fine).)")),
+    openingBalance: z.string().trim().min(1, message("Enter an opening balance (0 is fine).")),
   })
   .superRefine((values, ctx) => {
     if (values.openingBalance) {

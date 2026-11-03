@@ -17,7 +17,7 @@ describe("profileFormSchema", () => {
   it("accepts a name and an opening balance, including zero", () => {
     expect(errorsOf({ displayName: "Ana", openingBalance: "1.500.000" })).toEqual({});
     expect(errorsOf({ displayName: "Ana", openingBalance: "0" })).toEqual({});
-  });
+  }); 
 
   it("requires both fields", () => {
     expect(errorsOf({ displayName: "  ", openingBalance: "" })).toEqual({
@@ -44,3 +44,4 @@ describe("profileFormSchema", () => {
     expect(() => toProfilePatch({ displayName: "Ana", openingBalance: "oops" })).toThrow();
   });
 });
+ 
