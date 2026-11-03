@@ -1,5 +1,6 @@
 import { MAX_MINOR_UNITS } from "@/constants";
 import type { SavingsGoal } from "@/types/domain";
+import { message } from "@/i18n/utils";
 
 export interface GoalProgress {
   /** 0–1, clamped: an over-funded goal shows 100%, not 130%. */
@@ -28,10 +29,10 @@ export function applyContribution(
   now: string = new Date().toISOString(),
 ): ContributionResult {
   if (!Number.isSafeInteger(amount) || amount <= 0) {
-    return { ok: false, error: "Contribution must be a positive amount." };
+    return { ok: false, error: message("Contribution must be a positive amount.") };
   }
   const next = goal.currentAmount + amount;
-  if (next > MAX_MINOR_UNITS) return { ok: false, error: "That contribution is too large." };
+  if (next > MAX_MINOR_UNITS) return { ok: false, error: message("That contribution is too large." )};
   return { ok: true, goal: { ...goal, currentAmount: next, updatedAt: now } };
 }
 
