@@ -17,7 +17,7 @@ import type { Budget } from "@/types/domain";
 
 import { budgetFormSchema, toBudgetInput, type BudgetFormValues } from "../schemas/budget-form";
 import { createBudget, updateBudgetLimit } from "../services/budget-service";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 export type BudgetFormMode =
   | {

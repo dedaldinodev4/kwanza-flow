@@ -3,7 +3,7 @@ import {
   type AppData,
   type UserPreferences
 } from "@/types/domain";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 
 export type PreferencesPatch = Partial<

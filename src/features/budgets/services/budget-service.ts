@@ -1,5 +1,5 @@
 import { getCategory } from "@/lib/categories";
-import { message, MessageParams } from "@/i18n/utils";
+import { message, MessageParams } from "@/i18n/utils/message";
 
 import { generateId } from "@/lib/generate-id";
 import { budgetSchema, type AppData, type Budget } from "@/types/domain";

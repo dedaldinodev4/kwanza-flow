@@ -3,7 +3,7 @@ import { z } from "zod";
 import { amountError } from "@/lib/money/amount-validation";
 import { parseMoneyInput } from "@/lib/money/parse-money";
 import { isoDateSchema } from "@/types/domain";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 interface GoalSchemaOptions {
   today: string;

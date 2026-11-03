@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { getCategory } from "@/lib/categories";
 import { formatMonth } from "@/lib/formatters/date";
 
-import { message, type MessageParams } from "@/i18n/utils";
+import { message, type MessageParams } from "@/i18n/utils/message";
 import { useLanguage } from "@/providers/i18n-provider";
 import type { Language } from "@/i18n/languages";
 

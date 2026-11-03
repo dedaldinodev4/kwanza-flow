@@ -2,7 +2,7 @@ import { applyContribution } from "@/lib/calculations";
 import { generateId } from "@/lib/generate-id";
 import { savingsGoalSchema, type AppData, type SavingsGoal } from "@/types/domain";
 import type { GoalInput } from "../schemas/goal-form";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 export type GoalResult =
   { ok: true; data: AppData; goal: SavingsGoal } | { ok: false; error: string };

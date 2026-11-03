@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { dateLocale } from "@/i18n/date-locale";
 import { DEFAULT_LANGUAGE, type Language } from "@/i18n/languages";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 import { fromIsoDate, monthOf, monthRange, monthsBetween, shiftMonth } from "./iso";
 
 //* PERIOD *//

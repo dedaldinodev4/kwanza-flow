@@ -11,7 +11,7 @@ import type { UserPreferences } from "@/types/domain";
 
 import { updatePreferences } from "../services/preferences-service";
 import { useTranslation } from "react-i18next";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 type Locale = UserPreferences["locale"];
 

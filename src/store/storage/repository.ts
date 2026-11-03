@@ -1,4 +1,4 @@
-import { type MessageParams, message } from "@/i18n/utils";
+import { type MessageParams, message } from "@/i18n/utils/message";
 import { appDataSchema, type AppData } from "@/types/domain";
 import { checkIntegrity } from "./integrity";
 import type { StorageLike } from "./storage";

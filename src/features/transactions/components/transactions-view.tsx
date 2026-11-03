@@ -20,7 +20,7 @@ import { Pagination } from "./pagination";
 import { TransactionFilters } from "./transaction-filters";
 import type { FormMode } from "./transaction-form-dialog";
 import { TransactionList } from "./transaction-list";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 
 const TransactionFormDialog = dynamic(

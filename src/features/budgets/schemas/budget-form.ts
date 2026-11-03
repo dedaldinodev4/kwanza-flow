@@ -2,7 +2,7 @@ import { z } from "zod";
 import { getCategory } from "@/lib/categories";
 import { amountError } from "@/lib/money/amount-validation";
 import { parseMoneyInput } from "@/lib/money/parse-money";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 
 export const budgetFormSchema = z

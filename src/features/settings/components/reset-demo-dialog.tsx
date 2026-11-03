@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { useAppActions } from "@/providers/app-data-provider";
-import { message  } from "@/i18n/utils";
+import { message  } from "@/i18n/utils/message";
 
 export function ResetDemoDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation()

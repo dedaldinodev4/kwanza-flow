@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { AddTransactionButton } from "@/features/transactions/components/add-transaction-button";
 import { DashboardSkeleton, DashboardView } from "@/features/dashboard/components/dashboard-view";
 
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 
 export const metadata: Metadata = { title: "Overview" };

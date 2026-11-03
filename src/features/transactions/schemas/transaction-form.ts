@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 import { getCategory } from "@/lib/categories";
 import { MAX_MINOR_UNITS } from "@/constants";
 import { parseMoneyInput } from "@/lib/money/parse-money";

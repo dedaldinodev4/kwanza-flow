@@ -1,5 +1,5 @@
 import { compareTransactionsNewestFirst } from "@/lib/calculations";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 import type { Transaction, TransactionType } from "@/types/domain";
 
 export const SORT_OPTIONS = [

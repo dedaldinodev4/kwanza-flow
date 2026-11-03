@@ -22,7 +22,7 @@ import {
 } from "../schemas/transaction-form";
 import { createTransaction, updateTransaction } from "../services/transaction-service";
 import { useTranslation } from "react-i18next";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 export type FormMode = { kind: "create" } | { kind: "edit"; transaction: Transaction };
 

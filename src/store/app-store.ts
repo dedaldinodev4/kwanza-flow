@@ -1,4 +1,4 @@
-import { type MessageParams, message } from "@/i18n/utils";
+import { type MessageParams, message } from "@/i18n/utils/message";
 import type { AppDataRepository, Notice, SaveResult } from "./storage/repository";
 
 import { STORAGE_KEY } from "./storage/repository";

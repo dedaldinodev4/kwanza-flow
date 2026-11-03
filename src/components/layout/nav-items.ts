@@ -6,7 +6,7 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 export interface NavItem {
   href: "/" | "/transactions" | "/budgets" | "/goals" | "/settings";

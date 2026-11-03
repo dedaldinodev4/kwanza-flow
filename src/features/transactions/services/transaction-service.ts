@@ -1,6 +1,6 @@
 import { getCategory } from "@/lib/categories";
 import { generateId } from "@/lib/generate-id";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 import { transactionSchema, type AppData, type Transaction } from "@/types/domain";
 import type { TransactionInput } from "../schemas/transaction-form";
 

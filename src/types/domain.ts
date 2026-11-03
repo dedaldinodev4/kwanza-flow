@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 import { SUPPORTED_LOCALES } from "@/lib/locales";
 import { MAX_MINOR_UNITS } from "@/constants";
 

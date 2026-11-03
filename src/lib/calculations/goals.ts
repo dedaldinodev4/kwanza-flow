@@ -1,6 +1,6 @@
 import { MAX_MINOR_UNITS } from "@/constants";
 import type { SavingsGoal } from "@/types/domain";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 export interface GoalProgress {
   /** 0–1, clamped: an over-funded goal shows 100%, not 130%. */

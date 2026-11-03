@@ -1,5 +1,5 @@
 import type { Category, TransactionType } from "@/types/domain";
-import { message } from "@/i18n/utils";
+import { message } from "@/i18n/utils/message";
 
 //* Fixed category list for the MVP (custom categories are out of scope). *//
 export const CATEGORIES: readonly Category[] = [
