@@ -75,10 +75,7 @@ export function BudgetsView() {
   if (state.status !== "ready" || !view) {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader
-          title={t("{{title}}", { title: HEADER.title })}
-          description={t("{{description}}", { title: HEADER.description })}
-        />
+        <PageHeader {...HEADER} />
         <span className="sr-only">{t("Loading your budgets…")}</span>
         <Skeleton className="h-12 w-72" />
         <Skeleton className="h-40 w-full" />
@@ -124,8 +121,7 @@ export function BudgetsView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={t("{{title}}", { title: HEADER.title })}
-        description={t("{{description}}", { title: HEADER.description })}
+        {...HEADER}
         actions={addButton}
       />
       {allBudgeted && (

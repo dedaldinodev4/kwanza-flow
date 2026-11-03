@@ -21,10 +21,7 @@ export function SettingsView() {
   if (state.status !== "ready") {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader
-          title={t("{{title}}", { title: HEADER.title })}
-          description={t("{{description}}", { title: HEADER.description })}
-        />
+        <PageHeader {...HEADER} />
         <span className="sr-only">{t("Loading your settings…")}</span>
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -35,10 +32,7 @@ export function SettingsView() {
   const { preferences } = state.data;
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t("{{title}}", { title: HEADER.title })}
-        description={t("{{description}}", { title: HEADER.description })}
-      />
+      <PageHeader {...HEADER} />
       <ProfileSection preferences={preferences} />
       <FormattingSection preferences={preferences} />
       <AppearanceSection preferences={preferences} />

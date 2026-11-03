@@ -56,7 +56,7 @@ export function TransactionsView() {
   if (state.status !== "ready" || !result) {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader title={t(HEADER.title)} description={t(HEADER.description)} />
+        <PageHeader {...HEADER} />
         <span className="sr-only">{t("Loading your transactions…")}</span>
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-72 w-full" />

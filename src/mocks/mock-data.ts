@@ -1,6 +1,12 @@
 import { monthOf, monthRange, monthsBetween, shiftMonth } from "@/lib/dates/iso";
 import type { AppData, Budget, SavingsGoal, Transaction, TransactionType } from "@/types/domain";
 
+/**
+ * Deterministic demo data. The same `referenceDate` always yields byte-identical output:
+ * no Math.random(), no reading the clock. Amounts are Kz (major units) here for readability
+ * and converted to integer minor units (cêntimos) at the boundary.
+ * This is fictional data and must never be presented as a real bank account.
+ */
 
 interface Template {
   slug: string;
@@ -9,9 +15,9 @@ interface Template {
   categoryId: string;
   day: number;
   amountKz: number;
-  //* ± percentage variation applied per month (0 = fixed). *//
+  /** ± percentage variation applied per month (0 = fixed). */
   variance: number;
-  //* Only generated in months where this predicate holds (deterministic). *//
+  /** Only generated in months where this predicate holds (deterministic). */
   when?: (monthIndex: number) => boolean;
 }
 
@@ -200,7 +206,7 @@ const TEMPLATES: readonly Template[] = [
   },
 ];
 
-//* Monthly budget limits in Kz for the categories the demo user tracks. *//
+/** Monthly budget limits in Kz for the categories the demo user tracks. */
 const BUDGET_LIMITS_KZ: Readonly<Record<string, number>> = {
   groceries: 130_000,
   transport: 50_000,
@@ -209,7 +215,7 @@ const BUDGET_LIMITS_KZ: Readonly<Record<string, number>> = {
   entertainment: 20_000,
 };
 
-//* Small stable string hash (FNV-1a) → non-negative integer. *//
+/** Small stable string hash (FNV-1a) → non-negative integer. */
 function hash(input: string): number {
   let h = 2166136261;
   for (let i = 0; i < input.length; i += 1) {
@@ -219,7 +225,7 @@ function hash(input: string): number {
   return h >>> 0;
 }
 
-//* Applies ±variance% deterministically, rounds to the nearest Kz 500, returns minor units. *//
+/** Applies ±variance% deterministically, rounds to the nearest Kz 500, returns minor units. */
 function varyAmount(amountKz: number, variance: number, seed: string): number {
   const offset = variance === 0 ? 0 : ((hash(seed) % 201) - 100) / 100; // −1.00 … +1.00
   const rounded = Math.max(
@@ -233,7 +239,7 @@ function clampDay(month: string, day: number): number {
   return Math.min(day, Number(monthRange(month).end.slice(8, 10)));
 }
 
-//* From the earlier of 1 Jan of the reference year and five months back, through the reference month. *//
+/** From the earlier of 1 Jan of the reference year and five months back, through the reference month. */
 export function mockMonths(referenceDate: string): string[] {
   const refMonth = monthOf(referenceDate);
   const startOfYear = `${referenceDate.slice(0, 4)}-01`;

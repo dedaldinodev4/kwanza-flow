@@ -53,10 +53,7 @@ export function GoalsView() {
   if (state.status !== "ready" || !sorted || !summary) {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader
-          title={t("{{title}}", { title: HEADER.title })}
-          description={t("{{description}}", { title: HEADER.description })}
-        />
+        <PageHeader {...HEADER} />
         <span className="sr-only">{t("Loading your goals…")}</span>
         <Skeleton className="h-28 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -82,11 +79,7 @@ export function GoalsView() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t("{{title}}", { title: HEADER.title })}
-        description={t("{{description}}", { title: HEADER.description })}
-        actions={addButton}
-      />
+      <PageHeader {...HEADER} actions={addButton} />
 
       {sorted.length === 0 ? (
         <EmptyState

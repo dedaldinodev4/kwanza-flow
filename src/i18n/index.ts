@@ -9,7 +9,7 @@ import { I18N_CODE, type Language } from "./languages";
  * Two namespaces: `translation` for the interface, `demo` for the sample data, so text a person types is never
  * translated and can never collide with an interface string.
  */
-const resources = { en, pt } as const;
+const resources = { en, [I18N_CODE.pt]: pt };
 
 const cache = new Map<Language, i18n>();
 
