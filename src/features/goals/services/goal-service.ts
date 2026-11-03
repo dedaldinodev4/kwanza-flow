@@ -2,6 +2,7 @@ import { applyContribution } from "@/lib/calculations";
 import { generateId } from "@/lib/generate-id";
 import { savingsGoalSchema, type AppData, type SavingsGoal } from "@/types/domain";
 import type { GoalInput } from "../schemas/goal-form";
+import { message } from "@/i18n/utils";
 
 export type GoalResult =
   { ok: true; data: AppData; goal: SavingsGoal } | { ok: false; error: string };
@@ -13,7 +14,9 @@ interface Context {
 
 //* validate goal *//
 function validate(candidate: SavingsGoal): string | null {
-  return savingsGoalSchema.safeParse(candidate).success ? null : "The goal details are not valid.";
+  return savingsGoalSchema.safeParse(candidate).success 
+    ? null 
+    : message("The goal details are not valid.");
 }
 
 //* createGoal - create a new goal *//
@@ -30,7 +33,7 @@ export function createGoal(data: AppData, input: GoalInput, ctx: Context): GoalR
     return { ok: false, error };
 
   if (data.goals.some((g) => g.id === goal.id))
-    return { ok: false, error: "Duplicate goal id." };
+    return { ok: false, error: message("Duplicate goal id.") };
 
   return {
     ok: true,
@@ -43,7 +46,7 @@ export function createGoal(data: AppData, input: GoalInput, ctx: Context): GoalR
 export function updateGoal(data: AppData, id: string, input: GoalInput, ctx: Context): GoalResult {
   const existing = data.goals.find((g) => g.id === id);
   if (!existing)
-    return { ok: false, error: "That goal no longer exists." };
+    return { ok: false, error: message("That goal no longer exists.") };
 
   const updated: SavingsGoal = {
     id: existing.id,
@@ -70,7 +73,7 @@ export function updateGoal(data: AppData, id: string, input: GoalInput, ctx: Con
 export function deleteGoal(data: AppData, id: string): GoalResult {
   const existing = data.goals.find((g) => g.id === id);
   if (!existing)
-    return { ok: false, error: "That goal no longer exists." };
+    return { ok: false, error: message("That goal no longer exists." )};
 
   return {
     ok: true,
@@ -91,7 +94,7 @@ export function contributeToGoal(
 ): GoalResult {
   const existing = data.goals.find((g) => g.id === id);
   if (!existing)
-    return { ok: false, error: "That goal no longer exists." };
+    return { ok: false, error: message("That goal no longer exists.") };
 
   const result = applyContribution(existing, amount, ctx.now);
   if (!result.ok)

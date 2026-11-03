@@ -19,6 +19,7 @@ import { sortGoals } from "../utils/sort-goals";
 import type { GoalFormMode } from "./goal-form-dialog";
 import { GoalCard } from "./goal-card";
 import { GoalsSummary } from "./goals-summary";
+import { useTranslation } from "react-i18next";
 
 
 const GoalFormDialog = dynamic(() => import("./goal-form-dialog").then((m) => m.GoalFormDialog), {
@@ -36,6 +37,7 @@ const DeleteGoalDialog = dynamic(
 const HEADER = { title: "Savings goals", description: "Plan and track what you are saving for." };
 
 export function GoalsView() {
+  const { t } = useTranslation()
   const state = useAppData();
   const { tryMutate } = useAppActions();
   const [formMode, setFormMode] = useState<GoalFormMode | null>(null);
@@ -51,8 +53,11 @@ export function GoalsView() {
   if (state.status !== "ready" || !sorted || !summary) {
     return (
       <div aria-busy="true" className="space-y-6">
-        <PageHeader {...HEADER} />
-        <span className="sr-only">Loading your goals…</span>
+        <PageHeader
+          title={t("{{title}}", { title: HEADER.title })}
+          description={t("{{description}}", { title: HEADER.description })}
+        />
+        <span className="sr-only">{t("Loading your goals…")}</span>
         <Skeleton className="h-28 w-full" />
         <Skeleton className="h-48 w-full" />
       </div>
@@ -71,19 +76,23 @@ export function GoalsView() {
   const addButton = (
     <Button onClick={() => setFormMode({ kind: "create" })}>
       <Plus aria-hidden className="size-4" />
-      Add goal
+      {t("Add goal")}
     </Button>
   );
 
   return (
     <div className="space-y-6">
-      <PageHeader {...HEADER} actions={addButton} />
+      <PageHeader
+        title={t("{{title}}", { title: HEADER.title })}
+        description={t("{{description}}", { title: HEADER.description })}
+        actions={addButton}
+      />
 
       {sorted.length === 0 ? (
         <EmptyState
           icon={Target}
-          title="No savings goals yet"
-          description="Set a target for something you are saving toward, then add money as you go and watch your progress."
+          title={t("No savings goals yet")}
+          description={t("Set a target for something you are saving toward, then add money as you go and watch your progress.")}
         />
       ) : (
         <>
@@ -100,7 +109,7 @@ export function GoalsView() {
               tabIndex={-1}
               className="text-section mb-3 outline-none"
             >
-              Your goals
+              {t("Your goals")}
             </h2>
             <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {sorted.map((goal) => (

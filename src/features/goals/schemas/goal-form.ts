@@ -1,7 +1,9 @@
 import { z } from "zod";
+
 import { amountError } from "@/lib/money/amount-validation";
 import { parseMoneyInput } from "@/lib/money/parse-money";
 import { isoDateSchema } from "@/types/domain";
+import { message } from "@/i18n/utils";
 
 interface GoalSchemaOptions {
   today: string;
@@ -14,9 +16,9 @@ export function createGoalFormSchema({ today, originalTargetDate }: GoalSchemaOp
       name: z
         .string()
         .trim()
-        .min(1, "Enter a name for the goal.")
-        .max(80, "Use 80 characters or fewer."),
-      targetAmount: z.string().trim().min(1, "Enter a target amount."),
+        .min(1, message("Enter a name for the goal."))
+        .max(80, message("Use 80 characters or fewer.")),
+      targetAmount: z.string().trim().min(1, message("Enter a target amount.")),
       currentAmount: z.string().trim(),
       targetDate: z.string(),
     })
@@ -36,13 +38,13 @@ export function createGoalFormSchema({ today, originalTargetDate }: GoalSchemaOp
           ctx.addIssue({
             code: "custom",
             path: ["targetDate"],
-            message: "Choose today or a later date.",
+            message: message("Choose today or a later date."),
           });
         } else if (Number(values.targetDate.slice(0, 4)) > 2100) {
           ctx.addIssue({
             code: "custom",
             path: ["targetDate"],
-            message: "Choose a date before 2101.",
+            message: message("Choose a date before 2101."),
           });
         }
       }
@@ -75,7 +77,7 @@ export function toGoalInput(values: GoalFormValues): GoalInput {
 }
 
 export const contributionFormSchema = z
-  .object({ amount: z.string().trim().min(1, "Enter an amount.") })
+  .object({ amount: z.string().trim().min(1, message("Enter an amount.")) })
   .superRefine((values, ctx) => {
     if (values.amount) {
       const message = amountError(values.amount);

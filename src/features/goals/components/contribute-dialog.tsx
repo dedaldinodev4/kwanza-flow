@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button, FieldError, Input, Label } from "@/components/ui";
@@ -27,12 +28,13 @@ export function ContributeDialog({
   goal: SavingsGoal | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation()
   return (
     <Dialog open={goal !== null} onOpenChange={(open) => !open && onClose()}>
       {goal && (
         <DialogContent
-          title={`Add money to ${goal.name}`}
-          description="Record an amount you have set aside for this goal."
+          title={t("Add money to {{name}}", { name: goal.name })}
+          description={t("Record an amount you have set aside for this goal.")}
         >
           <ContributeForm goal={goal} onDone={onClose} />
         </DialogContent>
@@ -42,6 +44,7 @@ export function ContributeDialog({
 }
 
 function ContributeForm({ goal, onDone }: { goal: SavingsGoal; onDone: () => void }) {
+  const { t } = useTranslation()
   const uid = useId();
   const { money } = useFormat();
   const { tryMutate } = useAppActions();
@@ -74,8 +77,8 @@ function ContributeForm({ goal, onDone }: { goal: SavingsGoal; onDone: () => voi
       }
       const reached = amount >= remaining;
       const message = reached
-        ? `Goal reached: ${goal.name}`
-        : `Added ${money(amount)} to ${goal.name}`;
+        ? t("Goal reached: {{name}}", { name: goal.name })
+        : t("Added {{amount}} to {{name}}", { amount: money(amount), name: goal.name });
       if (!result.ok)
         toast.warning(`${result.error} Your contribution is kept for this session only.`);
       else toast.success(message);
@@ -89,7 +92,12 @@ function ContributeForm({ goal, onDone }: { goal: SavingsGoal; onDone: () => voi
   return (
     <form onSubmit={(event) => void handleSubmit(onValid)(event)} noValidate className="space-y-5">
       <p className="money rounded-control bg-muted p-3 text-sm">
-        {money(goal.currentAmount)} saved of {money(goal.targetAmount)} · {money(remaining)} to go
+        {t("{{amount}} saved of {{target}} · {{remaining}} to go", {
+          amount: money(goal.currentAmount),
+          target: money(goal.targetAmount),
+          remaining: money(remaining)
+        })}
+
       </p>
       <div>
         <Label htmlFor={`${uid}-amount`}>Amount (Kz)</Label>
@@ -114,10 +122,10 @@ function ContributeForm({ goal, onDone }: { goal: SavingsGoal; onDone: () => voi
       )}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving…" : "Add money"}
+          {isSubmitting ? t("Saving…") : t("Add money")}
         </Button>
       </div>
     </form>

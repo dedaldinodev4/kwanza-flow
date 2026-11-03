@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button, FieldError, Input, Label } from "@/components/ui";
@@ -32,15 +33,16 @@ export function GoalFormDialog({
   mode: GoalFormMode | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation()
   return (
     <Dialog open={mode !== null} onOpenChange={(open) => !open && onClose()}>
       {mode && (
         <DialogContent
-          title={mode.kind === "create" ? "Add savings goal" : "Edit goal"}
+          title={mode.kind === "create" ? t("Add savings goal") : t("Edit goal")}
           description={
             mode.kind === "create"
-              ? "Name what you are saving for and set a target in kwanza (Kz)."
-              : "Update the details. You can also correct how much is saved so far."
+              ? t("Name what you are saving for and set a target in kwanza (Kz).")
+              : t("Update the details. You can also correct how much is saved so far.")
           }
         >
           <GoalForm mode={mode} onDone={onClose} />
@@ -51,6 +53,7 @@ export function GoalFormDialog({
 }
 
 function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) {
+  const { t } = useTranslation()
   const uid = useId();
   const state = useAppData();
   const { tryMutate } = useAppActions();
@@ -114,7 +117,7 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
   return (
     <form onSubmit={(event) => void handleSubmit(onValid)(event)} noValidate className="space-y-5">
       <div>
-        <Label htmlFor={id("name")}>Goal name</Label>
+        <Label htmlFor={id("name")}>{t("Goal name")}</Label>
         <Input
           id={id("name")}
           autoComplete="off"
@@ -127,7 +130,7 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <Label htmlFor={id("target")}>Target amount (Kz)</Label>
+          <Label htmlFor={id("target")}>{t("Target amount")} (Kz)</Label>
           <Input
             id={id("target")}
             inputMode="decimal"
@@ -141,9 +144,9 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
         </div>
         <div>
           <Label htmlFor={id("current")}>
-            {mode.kind === "create" ? "Already saved (Kz)" : "Saved so far (Kz)"}
+            {mode.kind === "create" ? t("Already saved (Kz)") : t("Saved so far (Kz)")}
             {mode.kind === "create" && (
-              <span className="text-muted-foreground font-normal"> (optional)</span>
+              <span className="text-muted-foreground font-normal">{t("(optional)")}</span>
             )}
           </Label>
           <Input
@@ -161,7 +164,7 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
 
       <div>
         <Label htmlFor={id("date")}>
-          Target date <span className="text-muted-foreground font-normal">(optional)</span>
+          {t("Target date")} <span className="text-muted-foreground font-normal">{t("(optional)")}</span>
         </Label>
         <Input
           id={id("date")}
@@ -185,10 +188,10 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving…" : mode.kind === "create" ? "Add goal" : "Save changes"}
+          {isSubmitting ? t("Saving…") : mode.kind === "create" ? t("Add goal") : t("Save changes")}
         </Button>
       </div>
     </form>

@@ -1,4 +1,7 @@
 {
-  "translation": {},
+  "translation": {
+    "{{count}} categories are over budget_one": "{{count}} category is over budget",
+    "Total expenses {{total}} across {{count}} categories. Largest: {{name}}, {{amount}} ({{share}})._one": "Total expenses {{total}} across {{count}} category. Largest: {{name}}, {{amount}} ({{share}})."
+  },
   "demo": {}
 }
