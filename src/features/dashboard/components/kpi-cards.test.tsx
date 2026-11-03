@@ -7,7 +7,7 @@ import { KpiCards } from "./kpi-cards";
 const render = (net: number, income = 500_000_00, expenses = 0) =>
   renderWithData(
     <KpiCards
-      balance={4_161_000_00}
+      balance={4_161_000_00} 
       asOf={TODAY}
       periodLabel="This month"
       summary={{ income, expenses, net, count: 3 }}

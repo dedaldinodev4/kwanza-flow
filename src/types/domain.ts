@@ -1,4 +1,6 @@
 import { z } from "zod";
+
+import { message } from "@/i18n/utils";
 import { SUPPORTED_LOCALES } from "@/lib/locales";
 import { MAX_MINOR_UNITS } from "@/constants";
 
@@ -7,7 +9,7 @@ const id = z.string().min(1).max(64);
 
 //* date *//
 export const isoDateSchema = z.iso.date();
-export const isoMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Expected YYYY-MM");
+export const isoMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, message("Expected YYYY-MM"));
 const isoTimestamp = z.iso.datetime();
 
 //* Money *//

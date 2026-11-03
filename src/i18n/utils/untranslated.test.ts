@@ -15,4 +15,4 @@ describe("no untranslated user-facing text in the source", () => {
     const report = findings.map((f) => `${f.file}:${f.line}  [${f.kind}]  ${f.text}`);
     expect(report, `${report.length} untranslated string(s):\n${report.join("\n")}`).toEqual([]);
   });
-});
+}); 
