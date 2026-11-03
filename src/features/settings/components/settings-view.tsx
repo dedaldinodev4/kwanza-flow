@@ -10,6 +10,7 @@ import { AppearanceSection } from "./appearance-section";
 import { DataSection } from "./data-section";
 import { FormattingSection } from "./formatting-section";
 import { ProfileSection } from "./profile-section";
+import { LanguageSection } from "./language-section";
 
 const HEADER = { title: "Settings", description: "Profile, formatting, and appearance." };
 
@@ -42,6 +43,7 @@ export function SettingsView() {
       <FormattingSection preferences={preferences} />
       <AppearanceSection preferences={preferences} />
       <DataSection data={state.data} />
+      <LanguageSection />
     </div>
   );
 }

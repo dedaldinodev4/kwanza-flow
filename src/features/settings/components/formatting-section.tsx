@@ -11,6 +11,7 @@ import type { UserPreferences } from "@/types/domain";
 
 import { updatePreferences } from "../services/preferences-service";
 import { useTranslation } from "react-i18next";
+import { message } from "@/i18n/utils";
 
 type Locale = UserPreferences["locale"];
 
@@ -48,20 +49,20 @@ export function FormattingSection({ preferences }: { preferences: UserPreference
   return (
     <Card aria-labelledby="formatting-title">
       <CardHeader
-        title={t("Currency and number format")}
+        title={message("Currency and number format")}
         titleId="formatting-title"
-        description={t("How amounts and percentages are written. The interface language is English.")}
+        description={message("How amounts and percentages are written.")}
       />
       <div className="space-y-5">
         <ChoiceGroup
-          legend="Number format"
+          legend={message("Number format")}
           name="locale"
           value={selectedLocaleOption(preferences.locale)}
           options={options}
           onChange={choose}
         />
         <dl className="text-sm">
-          <dt className="text-label text-muted-foreground">Currency</dt>
+          <dt className="text-label text-muted-foreground">{t("Currency")}</dt>
           <dd>{t("Angolan kwanza (AOA, Kz). It is the only currency in this demo.")}</dd>
         </dl>
       </div>
