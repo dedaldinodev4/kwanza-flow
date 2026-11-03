@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -18,13 +19,14 @@ import { updatePreferences } from "../services/preferences-service";
 
 export function ProfileSection({ preferences }: { preferences: UserPreferences }) {
 
+  const { t } = useTranslation()
   const formKey = `${preferences.displayName}|${preferences.openingBalance}`;
   return (
     <Card aria-labelledby="profile-title">
       <CardHeader
-        title="Demo profile"
+        title={t("Demo profile")}
         titleId="profile-title"
-        description="KwanzaFlow has no accounts or sign-in. This only labels your local demo data."
+        description={t("KwanzaFlow has no accounts or sign-in. This only labels your local demo data.")}
       />
       <ProfileForm key={formKey} preferences={preferences} />
     </Card>
@@ -32,6 +34,7 @@ export function ProfileSection({ preferences }: { preferences: UserPreferences }
 }
 
 function ProfileForm({ preferences }: { preferences: UserPreferences }) {
+  const { t } = useTranslation()
   const uid = useId();
   const { tryMutate } = useAppActions();
   const {
@@ -64,7 +67,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
     <form onSubmit={(event) => void handleSubmit(onValid)(event)} noValidate className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <Label htmlFor={id("name")}>Display name</Label>
+          <Label htmlFor={id("name")}>{t("Display name")}</Label>
           <Input
             id={id("name")}
             autoComplete="off"
@@ -75,7 +78,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
           <FieldError id={id("name-error")} message={errors.displayName?.message} />
         </div>
         <div>
-          <Label htmlFor={id("opening")}>Opening balance (Kz)</Label>
+          <Label htmlFor={id("opening")}>{t("Opening balance")} (Kz)</Label>
           <Input
             id={id("opening")}
             inputMode="decimal"
@@ -90,8 +93,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
             {...register("openingBalance")}
           />
           <p id={id("opening-hint")} className="text-caption text-muted-foreground mt-1.5">
-            The demo account&apos;s balance before the first transaction. Your current balance is
-            this plus all income, minus all expenses.
+           {t(" The demo account's balance before the first transaction. Your current balance is this plus all income, minus all expenses.")}
           </p>
           <FieldError id={id("opening-error")} message={errors.openingBalance?.message} />
         </div>
@@ -105,7 +107,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
         </p>
       )}
       <Button type="submit" disabled={!isDirty || isSubmitting}>
-        {isSubmitting ? "Saving…" : "Save profile"}
+        {isSubmitting ? t("Saving…") : t("Save profile")}
       </Button>
     </form>
   );

@@ -3,6 +3,7 @@ import {
   type AppData,
   type UserPreferences
 } from "@/types/domain";
+import { message } from "@/i18n/utils";
 
 
 export type PreferencesPatch = Partial<
@@ -18,7 +19,7 @@ export function updatePreferences(data: AppData, patch: PreferencesPatch): Prefe
   if (!parsed.success)
     return {
       ok: false,
-      error: "Those settings are not valid."
+      error: message("Those settings are not valid.")
     };
     
   return {

@@ -1,12 +1,17 @@
 import { z } from "zod";
 import { amountError } from "@/lib/money/amount-validation";
 import { parseMoneyInput } from "@/lib/money/parse-money";
+import { message } from "@/i18n/utils";
 
 //* ProfileFormSchema *//
 export const profileFormSchema = z
   .object({
-    displayName: z.string().trim().min(1, "Enter a name.").max(60, "Use 60 characters or fewer."),
-    openingBalance: z.string().trim().min(1, "Enter an opening balance (0 is fine)."),
+    displayName: z
+      .string()
+      .trim()
+      .min(1, message("Enter a name."))
+      .max(60, message("Use 60 characters or fewer.")),
+    openingBalance: z.string().trim().min(1, message("Enter an opening balance (0 is fine).)")),
   })
   .superRefine((values, ctx) => {
     if (values.openingBalance) {

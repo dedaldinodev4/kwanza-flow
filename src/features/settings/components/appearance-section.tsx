@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import { Card, CardHeader } from "@/components/ui/card";
 import { ChoiceGroup, type Choice } from "@/components/ui/choice-group";
@@ -27,6 +28,7 @@ const DENSITY_OPTIONS: readonly Choice<Density>[] = [
 ];
 
 export function AppearanceSection({ preferences }: { preferences: UserPreferences }) {
+  const { t } = useTranslation()
   const { theme, setTheme } = useTheme();
   const isClient = useIsClient();
   const { tryMutate } = useAppActions();
@@ -39,21 +41,21 @@ export function AppearanceSection({ preferences }: { preferences: UserPreference
   return (
     <Card aria-labelledby="appearance-title">
       <CardHeader
-        title="Appearance"
+        title={t("Appearance")}
         titleId="appearance-title"
-        description="Theme and layout density. Both apply immediately."
+        description={t("Theme and layout density. Both apply immediately.")}
       />
       <div className="space-y-6">
         {/* The theme is only known in the browser, so nothing appears selected until after hydration. */}
         <ChoiceGroup
-          legend="Theme"
+          legend={t("Theme")}
           name="theme"
           value={isClient ? ((theme as Theme | undefined) ?? "system") : ""}
           options={THEME_OPTIONS}
           onChange={setTheme}
         />
         <ChoiceGroup
-          legend="Layout density"
+          legend={t("Layout density")}
           name="density"
           value={preferences.density}
           options={DENSITY_OPTIONS}
