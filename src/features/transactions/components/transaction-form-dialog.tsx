@@ -23,6 +23,7 @@ import {
 import { createTransaction, updateTransaction } from "../services/transaction-service";
 import { useTranslation } from "react-i18next";
 import { message } from "@/i18n/utils/message";
+import { useCategoryName } from "@/hooks/use-i18n";
 
 export type FormMode = { kind: "create" } | { kind: "edit"; transaction: Transaction };
 
@@ -71,6 +72,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
   const { tryMutate } = useAppActions();
   const submitting = useRef(false);
   const { t } = useTranslation();
+  const categoryName = useCategoryName();
 
   const today = state.status === "ready" ? state.today : todayIso();
   const {
@@ -127,7 +129,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
   return (
     <form onSubmit={(event) => void handleSubmit(onValid)(event)} noValidate className="space-y-5">
       <fieldset>
-        <legend className="text-label mb-1.5">Type</legend>
+        <legend className="text-label mb-1.5">{t("Type")}</legend>
         <div className="rounded-control bg-muted grid grid-cols-2 gap-1 border p-1">
           {(["expense", "income"] as const).map((option) => (
             <label key={option} className="relative">
@@ -204,7 +206,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
           <option value="">{t("Choose a category")}</option>
           {categoriesOfType(type).map((category) => (
             <option key={category.id} value={category.id}>
-              {category.name}
+              {categoryName(category.id)}
             </option>
           ))}
         </Select>
@@ -213,7 +215,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
 
       <div>
         <Label htmlFor={id("notes")}>
-          {t("Notes")} <span className="text-muted-foreground font-normal">(optional)</span>
+          {t("Notes")} <span className="text-muted-foreground font-normal">{t("(optional)")}</span>
         </Label>
         <Textarea
           id={id("notes")}
