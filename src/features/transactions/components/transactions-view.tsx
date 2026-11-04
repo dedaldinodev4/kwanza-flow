@@ -82,7 +82,7 @@ export function TransactionsView() {
 
   const summary =
     result.totalMatches === 0
-      ? "No transactions to show"
+      ? t("No transactions to show")
       : `Showing ${result.firstIndex}–${result.lastIndex} of ${result.totalMatches} ${result.totalMatches === 1 ? "transaction" : "transactions"}${result.hasActiveFilters ? " matching your filters" : ""}`;
 
   return (
