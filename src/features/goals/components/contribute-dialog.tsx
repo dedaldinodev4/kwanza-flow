@@ -121,10 +121,10 @@ function ContributeForm({ goal, onDone }: { goal: SavingsGoal; onDone: () => voi
         </p>
       )}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
+        <Button className="cursor-pointer" variant="outline" onClick={onDone} disabled={isSubmitting}>
           {t("Cancel")}
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
           {isSubmitting ? t("Saving…") : t("Add money")}
         </Button>
       </div>

@@ -105,8 +105,8 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
         submitting.current = false;
         return;
       }
-      if (!result.ok) toast.warning(`${result.error} Your change is kept for this session only.`);
-      else toast.success(mode.kind === "create" ? "Goal added" : "Goal updated");
+      if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", { error: result.error }));
+      else toast.success(mode.kind === "create" ? t("Goal added") : t("Goal updated"));
       onDone();
     } catch (error) {
       submitting.current = false;
@@ -187,10 +187,10 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
       )}
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
+        <Button className="cursor-pointer" variant="outline" onClick={onDone} disabled={isSubmitting}>
           {t("Cancel")}
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
           {isSubmitting ? t("Saving…") : mode.kind === "create" ? t("Add goal") : t("Save changes")}
         </Button>
       </div>

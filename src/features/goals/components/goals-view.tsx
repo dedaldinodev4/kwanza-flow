@@ -64,14 +64,14 @@ export function GoalsView() {
   function confirmDelete(target: SavingsGoal) {
     const result = tryMutate((d) => deleteGoal(d, target.id));
     deleted.current = true;
-    if (result.ok) toast.success("Goal deleted");
+    if (result.ok) toast.success(t("Goal deleted"));
     else if (result.reason === "not-saved")
-      toast.warning(`${result.error} The deletion is kept for this session only.`);
+      toast.warning(t("{{error}} The deletion is kept for this session only.", {error: result.error}));
     else toast.error(result.error);
   }
 
   const addButton = (
-    <Button onClick={() => setFormMode({ kind: "create" })}>
+    <Button className="cursor-pointer" onClick={() => setFormMode({ kind: "create" })}>
       <Plus aria-hidden className="size-4" />
       {t("Add goal")}
     </Button>
