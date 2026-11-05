@@ -130,7 +130,7 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <Label htmlFor={id("target")}>{t("Target amount")} (Kz)</Label>
+          <Label htmlFor={id("target")}>{t("Target amount (Kz)")}</Label>
           <Input
             id={id("target")}
             inputMode="decimal"

@@ -11,6 +11,7 @@ import { goalProgress, isGoalOverdue } from "@/lib/calculations";
 import { formatDay } from "@/lib/formatters/date";
 import { useFormat } from "@/providers/use-format";
 import type { SavingsGoal } from "@/types/domain";
+import { useLanguage } from "@/providers/i18n-provider";
 
 interface GoalCardProps {
   goal: SavingsGoal;
@@ -22,7 +23,8 @@ interface GoalCardProps {
 
 export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCardProps) {
   const { t } = useTranslation()
-  const { money, ratio } = useFormat();
+  const { money, ratio, month } = useFormat();
+  const { language } = useLanguage()
   const progress = goalProgress(goal);
   const overdue = isGoalOverdue(goal, today);
   const year = today.slice(0, 4);
@@ -33,7 +35,7 @@ export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCa
         <div className="min-w-0">
           <h3 className="truncate text-sm font-semibold">{t("{{name}}", { name: goal.name })}</h3>
           <p className="money text-caption text-muted-foreground">
-            {t("{{amount}} of {{target}}", { amount: money(goal.currentAmount), target: money(goal.targetAmount)})}
+            {t("{{amount}} of {{target}}", { amount: money(goal.currentAmount), target: money(goal.targetAmount) })}
           </p>
         </div>
         <div className="-mt-1 -mr-2 flex shrink-0">
@@ -63,8 +65,10 @@ export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCa
           </span>
         ) : (
           <span className="money text-muted-foreground">
-            {t("{{remaining}} to go", { remaining: money(progress.remaining) })}
-            {goal.targetDate ? t("· by {{date}}", { date: formatDay(goal.targetDate, year)}) : ""}
+            {t("{{amount}} to go · by {{date}}", {
+              amount: money(progress.remaining),
+              date: goal.targetDate ? formatDay(goal.targetDate, year, language) : ""
+            })}
           </span>
         )}
       </div>
@@ -81,7 +85,7 @@ export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCa
           variant="outline"
           size="sm"
           className="mt-4"
-          aria-label={t("Add money to {{name}}", { name: goal.name })} 
+          aria-label={t("Add money to {{name}}", { name: goal.name })}
           onClick={onContribute}
         >
           <Plus aria-hidden className="size-4" />

@@ -100,7 +100,7 @@ function ContributeForm({ goal, onDone }: { goal: SavingsGoal; onDone: () => voi
 
       </p>
       <div>
-        <Label htmlFor={`${uid}-amount`}>Amount (Kz)</Label>
+        <Label htmlFor={`${uid}-amount`}>{t("Amount (Kz)")}</Label>
         <Input
           id={`${uid}-amount`}
           inputMode="decimal"

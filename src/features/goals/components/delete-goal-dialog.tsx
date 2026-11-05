@@ -27,7 +27,7 @@ export function DeleteGoalDialog({
       {goal && (
         <AlertDialogContent
           title={t("Delete this goal?")}
-          description={t(" “{{name}}” and its progress ({{amount}} saved) will be removed. This cannot be undone.", { name: goal.name, amount: money(goal.currentAmount) })}
+          description={t("“{{name}}” and its progress ({{amount}} saved) will be removed. This cannot be undone.", { name: goal.name, amount: money(goal.currentAmount) })}
           confirmLabel={t("Delete goal")}
           onConfirm={() => onConfirm(goal)}
           onCloseAutoFocus={onCloseAutoFocus}

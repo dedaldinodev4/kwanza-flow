@@ -29,7 +29,7 @@ export function GoalsSummary({ saved, target, completedCount, goalCount }: Goals
         <div>
           <dt className="text-label text-muted-foreground">{t("Goals completed")}</dt>
           <dd className="money text-kpi">
-            {t("{{completed}} of {{goals}}", { completed: completedCount, goals: goalCount})}
+            {t("{{completed}} of {{total}}", { completed: completedCount, total: goalCount })}
           </dd>
         </div>
       </dl>
