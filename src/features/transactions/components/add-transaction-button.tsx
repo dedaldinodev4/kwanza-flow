@@ -20,7 +20,7 @@ export function AddTransactionButton() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button className="cursor-pointer" onClick={() => setOpen(true)}>
         <Plus aria-hidden className="size-4" />
         {t("Add transaction")}
       </Button>

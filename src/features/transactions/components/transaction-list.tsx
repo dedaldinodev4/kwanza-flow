@@ -44,6 +44,7 @@ function Actions({
   return (
     <div className="flex items-center gap-1">
       <Button
+        className="cursor-pointer"
         variant="ghost"
         size="icon"
         aria-label={t("Edit {{name}}", { name })}
@@ -52,6 +53,7 @@ function Actions({
         <Pencil aria-hidden className="size-4" />
       </Button>
       <Button
+        className="cursor-pointer"
         variant="ghost"
         size="icon"
         aria-label={t("Delete {{name}}", { name })}

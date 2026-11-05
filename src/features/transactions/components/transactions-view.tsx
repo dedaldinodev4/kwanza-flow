@@ -67,14 +67,14 @@ export function TransactionsView() {
   function confirmDelete(target: Transaction) {
     const outcome = tryMutate((data) => deleteTransaction(data, target.id));
     deleted.current = true; // after a delete, focus moves to the results summary (the row is gone)
-    if (outcome.ok) toast.success(message("Transaction deleted"));
+    if (outcome.ok) toast.success(t("Transaction deleted"));
     else if (outcome.reason === "not-saved")
       toast.warning(message(`${outcome.error} The deletion is kept for this session only.`));
     else toast.error(outcome.error);
   }
 
   const addButton = (
-    <Button onClick={() => setFormMode({ kind: "create" })}>
+    <Button  className="cursor-pointer" onClick={() => setFormMode({ kind: "create" })}>
       <Plus aria-hidden className="size-4" />
       {t("Add transaction")}
     </Button>
@@ -83,7 +83,14 @@ export function TransactionsView() {
   const summary =
     result.totalMatches === 0
       ? t("No transactions to show")
-      : `Showing ${result.firstIndex}–${result.lastIndex} of ${result.totalMatches} ${result.totalMatches === 1 ? "transaction" : "transactions"}${result.hasActiveFilters ? " matching your filters" : ""}`;
+      : `${t("Showing {{firstIndex}}–{{lastIndex}} of ", {
+        firstIndex: result.firstIndex,
+        lastIndex: result.lastIndex
+      })} 
+      ${result.totalMatches === 1 ?
+        t("{{count}} transactions_one", { count: result.totalMatches })
+        : t("{{count}} transactions", { count: result.totalMatches })}
+        ${result.hasActiveFilters ? t("matching your filters") : ""}`;
 
   return (
     <div className="space-y-6">
@@ -115,13 +122,13 @@ export function TransactionsView() {
                 icon={SearchX}
                 title={
                   query.search.trim()
-                    ? message(`No matches for “${query.search.trim()}”`)
-                    : message("No matching transactions")
+                    ? t("No matches for “{{search}}”", { search: query.search.trim()})
+                    : t("No matching transactions")
                 }
                 description={
                   result.rangeError
-                    ? message("Fix the date range to see results.")
-                    : message("Try different words, or clear the filters to see everything.")
+                    ? t("Fix the date range to see results.")
+                    : t("Try different words, or clear the filters to see everything.")
                 }
               />
             ) : (

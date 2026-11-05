@@ -117,7 +117,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
       if (!result.ok) {
         toast.warning(message(`${result.error} Your change is kept for this session only.`));
       } else {
-        toast.success(mode.kind === "create" ? message("Transaction added") : message("Transaction updated"));
+        toast.success(mode.kind === "create" ? t("Transaction added") : t("Transaction updated"));
       }
       onDone();
     } catch (error) {
@@ -236,10 +236,10 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
       )}
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
+        <Button className="cursor-pointer" variant="outline" onClick={onDone} disabled={isSubmitting}>
           {t("Cancel")}
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
           {isSubmitting ? t("Saving…") : mode.kind === "create" ? t("Add transaction") : t("Save changes")}
         </Button>
       </div>
