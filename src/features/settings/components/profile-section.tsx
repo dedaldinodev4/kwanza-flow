@@ -106,7 +106,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
           {errors.root.server.message}
         </p>
       )}
-      <Button type="submit" disabled={!isDirty || isSubmitting}>
+      <Button className="cursor-pointer" type="submit" disabled={!isDirty || isSubmitting}>
         {isSubmitting ? t("Saving…") : t("Save profile")}
       </Button>
     </form>

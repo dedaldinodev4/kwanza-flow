@@ -37,7 +37,7 @@ export function DataSection({ data }: { data: AppData }) {
           {transactionsCount === 1 ? t("{{count}} savings goals_one", { count: goalsCount }) : t("{{count}} savings goals", { count: goalsCount })}
         </p>
         <div>
-          <Button variant="outline" onClick={() => setConfirming(true)}>
+          <Button className="cursor-pointer" variant="outline" onClick={() => setConfirming(true)}>
             <RotateCcw aria-hidden className="size-4" />
             {t("Reset demo data")}
           </Button>
