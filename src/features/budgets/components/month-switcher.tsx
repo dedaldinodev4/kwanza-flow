@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui";
 import { formatMonth } from "@/lib/formatters/date";
 import { shiftMonth } from "@/lib/dates/iso";
+import { useLanguage } from "@/providers/i18n-provider";
 
 interface MonthSwitcherProps {
   month: string;
@@ -16,7 +17,7 @@ interface MonthSwitcherProps {
 
 export function MonthSwitcher({ month, currentMonth, onChange }: MonthSwitcherProps) {
   const { t } = useTranslation();
-  
+  const { language } = useLanguage()
   return (
     <div role="group" aria-label={t("Month")} className="flex flex-wrap items-center gap-2">
       <Button
@@ -28,7 +29,7 @@ export function MonthSwitcher({ month, currentMonth, onChange }: MonthSwitcherPr
         <ChevronLeft aria-hidden className="size-4" />
       </Button>
       <p aria-live="polite" className="text-section min-w-36 text-center">
-        {formatMonth(month)}
+        {formatMonth(month, language)}
       </p>
       <Button
         variant="outline"
@@ -40,7 +41,7 @@ export function MonthSwitcher({ month, currentMonth, onChange }: MonthSwitcherPr
       </Button>
       {month !== currentMonth && (
         <Button variant="ghost" size="sm" onClick={() => onChange(currentMonth)}>
-          {t("Back to {{month}}", { month: formatMonth(currentMonth)} )}
+          {t("Back to {{month}}", { month: formatMonth(currentMonth, language)} )}
         </Button>
       )}
     </div>

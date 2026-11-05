@@ -14,10 +14,10 @@ export function BudgetSummary({
   monthLabel: string;
 }) {
   const { t } = useTranslation();
-  const { money, ratio } = useFormat();
+  const { money, ratio, day, month } = useFormat();
   const used = totals.limit > 0 ? totals.spent / totals.limit : 0;
   return (
-    <Card aria-label={t("Budget summary for {{month}}", { month: monthLabel})}>
+    <Card aria-label={t("Budget summary for {{month}}", { month: monthLabel })}>
       <dl className="grid gap-4 sm:grid-cols-3">
         <div>
           <dt className="text-label text-muted-foreground">{t("Budgeted")}</dt>
@@ -43,9 +43,12 @@ export function BudgetSummary({
           tone={budgetStatus(totals.spent, totals.limit)}
         />
         <p className="text-caption text-muted-foreground mt-2">
-          {t("{{ratioUsed}} of your total budget used", { ratioUsed: ratio(used)})}
+          {t("{{percent}} of your total budget used", { percent: ratio(used) })}
           {totals.overCount > 0 &&
-            ` · ${totals.overCount} ${totals.overCount === 1 ? t("category is") : t("categories are")}`}{t(" over budget")}
+            ` · ${totals.overCount === 1 ?
+              t("{{count}} categories are over budget_one", { count: totals.overCount })
+              : t("{{count}} categories are over budget", { count: totals.overCount })}
+              `}
         </p>
       </div>
     </Card>

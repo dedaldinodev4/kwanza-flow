@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button, FieldError, Input, Label, Select } from "@/components/ui";
 
-import { categoriesOfType, getCategory } from "@/lib/categories";
+import { categoriesOfType } from "@/lib/categories";
 import { formatMonth } from "@/lib/formatters/date";
 import { formatMinorForInput } from "@/lib/money/parse-money";
 import { useAppActions } from "@/providers/app-data-provider";
@@ -17,7 +17,8 @@ import type { Budget } from "@/types/domain";
 
 import { budgetFormSchema, toBudgetInput, type BudgetFormValues } from "../schemas/budget-form";
 import { createBudget, updateBudgetLimit } from "../services/budget-service";
-import { message } from "@/i18n/utils/message";
+import { useLanguage } from "@/providers/i18n-provider";
+import { useCategoryName } from "@/hooks/use-i18n";
 
 export type BudgetFormMode =
   | {
@@ -34,6 +35,8 @@ interface BudgetFormDialogProps {
 
 export function BudgetFormDialog({ mode, onClose }: BudgetFormDialogProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
+
   const month = mode?.kind === "create" ? mode.month : mode?.budget.month;
   return (
     <Dialog open={mode !== null} onOpenChange={(open) => !open && onClose()}>
@@ -42,8 +45,8 @@ export function BudgetFormDialog({ mode, onClose }: BudgetFormDialogProps) {
           title={mode.kind === "create" ? t("Add budget") : t("Edit budget")}
           description={
             mode.kind === "create"
-              ? t(`Set a spending limit for {{month}}.`, { month: formatMonth(month) })
-              : t(`Change the {{month}} limit. Spending is tracked automatically.`, { month: formatMonth(month) })
+              ? t(`Set a spending limit for {{month}}.`, { month: formatMonth(month, language) })
+              : t(`Change the {{month}} limit. Spending is tracked automatically.`, { month: formatMonth(month, language) })
           }
         >
           <BudgetForm mode={mode} month={month} onDone={onClose} />
@@ -65,6 +68,8 @@ function BudgetForm({
   const { t } = useTranslation();
   const uid = useId();
   const { tryMutate } = useAppActions();
+  const { language } = useLanguage();
+  const categoryName = useCategoryName()
   const submitting = useRef(false);
   const available =
     mode.kind === "create"
@@ -103,8 +108,8 @@ function BudgetForm({
         submitting.current = false;
         return;
       }
-      if (!result.ok) toast.warning(`${result.error} Your change is kept for this session only.`);
-      else toast.success(mode.kind === "create" ? message("Budget added") : message("Budget updated"));
+      if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", { error: result.error }));
+      else toast.success(mode.kind === "create" ? t("Budget added") : t("Budget updated"));
       onDone();
     } catch (error) {
       submitting.current = false;
@@ -126,7 +131,7 @@ function BudgetForm({
             <option value="">{t("Choose a category")}</option>
             {available.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name}
+                {categoryName(c.id)}
               </option>
             ))}
           </Select>
@@ -136,13 +141,13 @@ function BudgetForm({
         <div>
           <p className="text-label mb-1.5">{t("Category")}</p>
           <p className="text-sm">
-            {getCategory(mode.budget.categoryId)?.name ?? message("Unknown category")}
+            {categoryName(mode.budget.categoryId) ?? t("Unknown category")}
           </p>
         </div>
       )}
 
       <div>
-        <Label htmlFor={id("limit")}>{t("Monthly limit")} (Kz)</Label>
+        <Label htmlFor={id("limit")}>{t("Monthly limit (Kz)")}</Label>
         <Input
           id={id("limit")}
           inputMode="decimal"
@@ -155,7 +160,7 @@ function BudgetForm({
           {...register("limit")}
         />
         <p id={id("limit-hint")} className="text-caption text-muted-foreground mt-1.5">
-          {t("The most you plan to spend on this category in {{month}}.", { month: formatMonth(month) })}
+          {t("The most you plan to spend on this category in {{month}}.", { month: formatMonth(month, language) })}
         </p>
         <FieldError id={id("limit-error")} message={errors.limit?.message} />
       </div>
@@ -170,10 +175,10 @@ function BudgetForm({
       )}
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <Button variant="outline" onClick={onDone} disabled={isSubmitting}>
+        <Button className="cursor-pointer" variant="outline" onClick={onDone} disabled={isSubmitting}>
           {t("Cancel")}
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
           {isSubmitting ? t("Saving…") : mode.kind === "create" ? t("Add budget") : t("Save changes")}
         </Button>
       </div>

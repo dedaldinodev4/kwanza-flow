@@ -25,7 +25,7 @@
     "Appearance":"Aspeto",
     "As of {{date}}": "A {{date}}",
     "Back to Overview": "Voltar à visão geral",
-    "Back to {{month}}": "Voltar a {{month}}",
+    "Back to {{month}}": "Voltar à {{month}}",
     "Browser storage could not be read. The demo works, but nothing will be kept.": "Não foi possível ler o armazenamento do navegador. A demonstração funciona, mas nada será guardado.",
     "Browser storage is full or blocked, so changes could not be saved.": "O armazenamento do navegador está cheio ou bloqueado, por isso não foi possível guardar as alterações.",
     "Browser storage is unavailable, so changes will not be kept.": "O armazenamento do navegador não está disponível, por isso as alterações não serão guardadas.",
@@ -296,6 +296,7 @@
     "active": "ativos",
     "e.g. supermarket": "ex.: supermercado",
     "matching your filters": "altere seus filtros",
+    "this category": "esta categoria",
     "(optional)":"(opcional)",
     
     "{{amount}} of {{target}}":"{{amount}} de {{target}}",

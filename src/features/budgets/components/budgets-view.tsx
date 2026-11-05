@@ -24,6 +24,8 @@ import { BudgetCard } from "./budget-card";
 import type { BudgetFormMode } from "./budget-form-dialog";
 import { BudgetSummary } from "./budget-summary";
 import { MonthSwitcher } from "./month-switcher";
+import { useLanguage } from "@/providers/i18n-provider";
+import { useCategoryName } from "@/hooks/use-i18n";
 
 
 
@@ -43,11 +45,13 @@ export function BudgetsView() {
   const state = useAppData();
   const { tryMutate } = useAppActions();
   const { money } = useFormat();
+  const { language } = useLanguage()
   const [selected, setSelected] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<BudgetFormMode | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Budget | null>(null);
   const listRef = useRef<HTMLHeadingElement>(null);
   const deleted = useRef(false);
+  const categoryName = useCategoryName()
 
   const data = state.status === "ready" ? state.data : null;
   const currentMonth = state.status === "ready" ? monthOf(state.today) : "";
@@ -83,8 +87,8 @@ export function BudgetsView() {
     );
   }
 
-  const monthLabel = formatMonth(month);
-  const previousLabel = formatMonth(shiftMonth(month, -1));
+  const monthLabel = formatMonth(month, language);
+  const previousLabel = formatMonth(shiftMonth(month, -1), language);
   const allBudgeted = view.takenCategoryIds.length >= categoriesOfType("expense").length;
 
   function copyFromPrevious() {
@@ -93,21 +97,22 @@ export function BudgetsView() {
     );
     if (!result.ok && result.reason === "rejected") toast.error(result.error);
     else if (!result.ok)
-      toast.warning(`${result.error} The copied budgets are kept for this session only.`);
-    else toast.success(`Copied budgets from ${previousLabel}`);
+      toast.warning(t("{{error}} The copied budgets are kept for this session only.", {error: result.error}));
+    else toast.success(t("Copied budgets from {{month}}", { month: previousLabel}));
   }
 
   function confirmDelete(target: Budget) {
     const result = tryMutate((d) => deleteBudget(d, target.id));
     deleted.current = true;
-    if (result.ok) toast.success("Budget deleted");
+    if (result.ok) toast.success(t("Budget deleted"));
     else if (result.reason === "not-saved")
-      toast.warning(`${result.error} The deletion is kept for this session only.`);
+      toast.warning(t("{{error}} The deletion is kept for this session only.", {error: result.error}));
     else toast.error(result.error);
   }
 
   const addButton = (
     <Button
+      className="cursor-pointer"
       disabled={allBudgeted}
       onClick={() =>
         setFormMode({ kind: "create", month, takenCategoryIds: view.takenCategoryIds })
@@ -171,7 +176,7 @@ export function BudgetsView() {
         <div>
           <Button variant="outline" onClick={copyFromPrevious}>
             <Copy aria-hidden className="size-4" />
-            {t("Copy budgets from {{label}}", { label: previousLabel })}
+            {t("Copy budgets from {{month}}", { month: previousLabel })}
           </Button>
         </div>
       )}
@@ -181,7 +186,7 @@ export function BudgetsView() {
           <CardHeader
             title={t("Spending without a budget")}
             titleId="unbudgeted-title"
-            description={t("Spent in {{label}} on categories with no limit set", { label: monthLabel })}
+            description={t("Spent in {{month}} on categories with no limit set", { month: monthLabel })}
           />
           <ul className="divide-y">
             {view.unbudgeted.map((row) => (
@@ -189,7 +194,7 @@ export function BudgetsView() {
                 key={row.categoryId}
                 className="flex items-center justify-between gap-3 py-2.5 text-sm"
               >
-                <span>{row.name}</span>
+                <span>{categoryName(row.categoryId)}</span>
                 <span className="money font-medium">{money(row.spent)}</span>
               </li>
             ))}
