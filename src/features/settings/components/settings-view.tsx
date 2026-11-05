@@ -12,7 +12,7 @@ import { FormattingSection } from "./formatting-section";
 import { ProfileSection } from "./profile-section";
 import { LanguageSection } from "./language-section";
 
-const HEADER = { title: "Settings", description: "Profile, formatting, and appearance." };
+const HEADER = { title: "Settings", description: "Profile, formatting, language, and appearance." };
 
 export function SettingsView() {
   const { t } = useTranslation();

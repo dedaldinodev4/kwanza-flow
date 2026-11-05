@@ -27,6 +27,7 @@ const DENSITY_OPTIONS: readonly Choice<Density>[] = [
   { value: "compact", label: "Compact", description: "Tighter cards and lists" },
 ];
 
+
 export function AppearanceSection({ preferences }: { preferences: UserPreferences }) {
   const { t } = useTranslation()
   const { theme, setTheme } = useTheme();
@@ -36,6 +37,22 @@ export function AppearanceSection({ preferences }: { preferences: UserPreference
   function chooseDensity(density: Density) {
     const result = tryMutate((data) => updatePreferences(data, { density }));
     if (!result.ok) toast.error(result.error);
+  }
+
+  function themeOptions (): Choice<Theme>[] {
+    return THEME_OPTIONS.map((option) => ({
+      ...option,
+      label: t(option.label),
+      description: option.description ? t(option.description) : undefined
+    }))
+  }
+
+  function densityOptions (): Choice<Density>[] {
+    return DENSITY_OPTIONS.map((option) => ({
+      ...option,
+      label: t(option.label),
+      description: option.description ? t(option.description) : undefined
+    }))
   }
 
   return (
@@ -51,14 +68,14 @@ export function AppearanceSection({ preferences }: { preferences: UserPreference
           legend={t("Theme")}
           name="theme"
           value={isClient ? ((theme as Theme | undefined) ?? "system") : ""}
-          options={THEME_OPTIONS}
+          options={themeOptions()}
           onChange={setTheme}
         />
         <ChoiceGroup
           legend={t("Layout density")}
           name="density"
           value={preferences.density}
-          options={DENSITY_OPTIONS}
+          options={densityOptions()}
           onChange={chooseDensity}
         />
       </div>

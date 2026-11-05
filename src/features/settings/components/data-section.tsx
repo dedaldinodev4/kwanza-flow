@@ -18,7 +18,11 @@ const ResetDemoDialog = dynamic(
 export function DataSection({ data }: { data: AppData }) {
   const { t } = useTranslation()
   const [confirming, setConfirming] = useState(false);
-  const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+  const transactionsCount = data.transactions.length;
+  const budgetsCount = data.budgets.length;
+  const goalsCount = data.goals.length;
+
   return (
     <Card aria-labelledby="data-title">
       <CardHeader
@@ -28,14 +32,14 @@ export function DataSection({ data }: { data: AppData }) {
       />
       <div className="space-y-4">
         <p className="text-sm">
-          {count(data.transactions.length, t("transaction"), t("transactions"))} ·{" "}
-          {count(data.budgets.length, t("budget"), t("budgets"))} ·{" "}
-          {count(data.goals.length, t("savings goal"), t("savings goals"))}
+          {transactionsCount === 1 ? t("{{count}} transactions_one", { count: transactionsCount }) : t("{{count}} transactions", { count: transactionsCount })} ·{" "}
+          {budgetsCount === 1 ? t("{{count}} budgets_one", { count: budgetsCount }) : t("{{count}} budgets", { count: budgetsCount })} ·{" "}
+          {transactionsCount === 1 ? t("{{count}} savings goals_one", { count: goalsCount }) : t("{{count}} savings goals", { count: goalsCount })}
         </p>
         <div>
           <Button variant="outline" onClick={() => setConfirming(true)}>
             <RotateCcw aria-hidden className="size-4" />
-           {t("Reset demo data")}
+            {t("Reset demo data")}
           </Button>
         </div>
       </div>

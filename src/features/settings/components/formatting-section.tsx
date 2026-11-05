@@ -11,25 +11,11 @@ import type { UserPreferences } from "@/types/domain";
 
 import { updatePreferences } from "../services/preferences-service";
 import { useTranslation } from "react-i18next";
-import { message } from "@/i18n/utils/message";
 
 type Locale = UserPreferences["locale"];
 
 const SAMPLE_MINOR = 123_456_750; // Kz 1 234 567,50
 
-
-const OPTIONS: readonly { value: Locale; label: string }[] = [
-  { value: "pt-AO", label: "Portuguese (Angola)" },
-  { value: "en-US", label: "English (United States)" },
-];
-
-
-export function localeOptions(): Choice<Locale>[] {
-  return OPTIONS.map((o) => ({
-    ...o,
-    description: formatMoney(SAMPLE_MINOR, { locale: o.value }),
-  }));
-}
 
 
 export function selectedLocaleOption(locale: Locale): Locale {
@@ -39,6 +25,20 @@ export function selectedLocaleOption(locale: Locale): Locale {
 export function FormattingSection({ preferences }: { preferences: UserPreferences }) {
   const { t } = useTranslation()
   const { tryMutate } = useAppActions();
+
+  const OPTIONS: readonly { value: Locale; label: string }[] = [
+    { value: "pt-AO", label: "Portuguese (Angola)" },
+    { value: "en-US", label: "English (United States)" },
+  ];
+
+
+  function localeOptions(): Choice<Locale>[] {
+    return OPTIONS.map((o) => ({
+      ...o,
+      label : t(o.label),
+      description: formatMoney(SAMPLE_MINOR, { locale: o.value }),
+    }));
+  }
   const options = localeOptions();
 
   function choose(locale: Locale) {
@@ -49,13 +49,13 @@ export function FormattingSection({ preferences }: { preferences: UserPreference
   return (
     <Card aria-labelledby="formatting-title">
       <CardHeader
-        title={message("Currency and number format")}
+        title={t("Currency and number format")}
         titleId="formatting-title"
-        description={message("How amounts and percentages are written.")}
+        description={t("How amounts and percentages are written.")}
       />
       <div className="space-y-5">
         <ChoiceGroup
-          legend={message("Number format")}
+          legend={t("Number format")}
           name="locale"
           value={selectedLocaleOption(preferences.locale)}
           options={options}

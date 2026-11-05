@@ -22,7 +22,7 @@ export function ResetDemoDialog({ open, onClose }: { open: boolean; onClose: () 
       {open && (
         <AlertDialogContent
           title={t("Reset demo data?")}
-          description={t("Everything you added or changed will be replaced with fresh demo data: transactions, budgets, goals and your profile settings. Your theme choice is kept. This cannot be undone.")}
+          description={t("Everything you added or changed will be replaced with fresh demo data: transactions, budgets, goals and your profile settings. Your theme and language choices are kept. This cannot be undone.")}
           confirmLabel={t("Reset demo data")}
           onConfirm={confirm}
         />

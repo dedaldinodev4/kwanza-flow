@@ -78,7 +78,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
           <FieldError id={id("name-error")} message={errors.displayName?.message} />
         </div>
         <div>
-          <Label htmlFor={id("opening")}>{t("Opening balance")} (Kz)</Label>
+          <Label htmlFor={id("opening")}>{t("Opening balance (Kz)")} (Kz)</Label>
           <Input
             id={id("opening")}
             inputMode="decimal"
@@ -93,7 +93,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
             {...register("openingBalance")}
           />
           <p id={id("opening-hint")} className="text-caption text-muted-foreground mt-1.5">
-           {t(" The demo account's balance before the first transaction. Your current balance is this plus all income, minus all expenses.")}
+           {t("The demo account's balance before the first transaction. Your current balance is this plus all income, minus all expenses.")}
           </p>
           <FieldError id={id("opening-error")} message={errors.openingBalance?.message} />
         </div>
