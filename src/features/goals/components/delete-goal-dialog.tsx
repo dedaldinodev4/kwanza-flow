@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useFormat } from "@/providers/use-format";
 import type { SavingsGoal } from "@/types/domain";
+import { useDemoText } from "@/hooks/use-i18n";
 
 interface DeleteGoalDialogProps {
   goal: SavingsGoal | null;
@@ -21,13 +22,15 @@ export function DeleteGoalDialog({
 }: DeleteGoalDialogProps) {
   const { t } = useTranslation()
   const { money } = useFormat();
+  const demoText = useDemoText();
 
   return (
     <AlertDialog open={goal !== null} onOpenChange={(open) => !open && onCancel()}>
       {goal && (
         <AlertDialogContent
           title={t("Delete this goal?")}
-          description={t("“{{name}}” and its progress ({{amount}} saved) will be removed. This cannot be undone.", { name: goal.name, amount: money(goal.currentAmount) })}
+          description={t("“{{name}}” and its progress ({{amount}} saved) will be removed. This cannot be undone.", 
+            { name: demoText(goal.name), amount: money(goal.currentAmount) })}
           confirmLabel={t("Delete goal")}
           onConfirm={() => onConfirm(goal)}
           onCloseAutoFocus={onCloseAutoFocus}

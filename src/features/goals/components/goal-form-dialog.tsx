@@ -23,6 +23,7 @@ import {
   createGoal,
   updateGoal
 } from "../services/goal-service";
+import { useDemoText, useMessage } from "@/hooks/use-i18n";
 
 export type GoalFormMode = { kind: "create" } | { kind: "edit"; goal: SavingsGoal };
 
@@ -60,6 +61,8 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
   const submitting = useRef(false);
   const today = state.status === "ready" ? state.today : todayIso();
   const original = mode.kind === "edit" ? mode.goal : undefined;
+  const message = useMessage();
+  const demoText = useDemoText()
 
   const schema = useMemo(
     () => createGoalFormSchema({ today, originalTargetDate: original?.targetDate }),
@@ -74,7 +77,7 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
     resolver: zodResolver(schema),
     defaultValues: original
       ? {
-        name: original.name,
+        name: demoText(original.name),
         targetAmount: formatMinorForInput(original.targetAmount),
         currentAmount: formatMinorForInput(original.currentAmount),
         targetDate: original.targetDate ?? "",
@@ -101,11 +104,13 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
           : updateGoal(data, mode.goal.id, input, { now }),
       );
       if (!result.ok && result.reason === "rejected") {
-        setError("root.server", { message: result.error });
+        setError("root.server", { message: message(result.error, result.params) });
         submitting.current = false;
         return;
       }
-      if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", { error: result.error }));
+      if (!result.ok) toast.warning( t("{{error}} Your change is kept for this session only.", {
+        error: message(result.error, result.params),
+      }),);
       else toast.success(mode.kind === "create" ? t("Goal added") : t("Goal updated"));
       onDone();
     } catch (error) {

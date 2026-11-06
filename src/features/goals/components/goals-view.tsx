@@ -20,6 +20,7 @@ import type { GoalFormMode } from "./goal-form-dialog";
 import { GoalCard } from "./goal-card";
 import { GoalsSummary } from "./goals-summary";
 import { useTranslation } from "react-i18next";
+import { useDemoText, useMessage } from "@/hooks/use-i18n";
 
 
 const GoalFormDialog = dynamic(() => import("./goal-form-dialog").then((m) => m.GoalFormDialog), {
@@ -38,6 +39,8 @@ const HEADER = { title: "Savings goals", description: "Plan and track what you a
 
 export function GoalsView() {
   const { t } = useTranslation()
+  const message = useMessage();
+  const demoText = useDemoText()
   const state = useAppData();
   const { tryMutate } = useAppActions();
   const [formMode, setFormMode] = useState<GoalFormMode | null>(null);
@@ -66,8 +69,10 @@ export function GoalsView() {
     deleted.current = true;
     if (result.ok) toast.success(t("Goal deleted"));
     else if (result.reason === "not-saved")
-      toast.warning(t("{{error}} The deletion is kept for this session only.", {error: result.error}));
-    else toast.error(result.error);
+      toast.warning( t("{{error}} The deletion is kept for this session only.", {
+        error: message(result.error, result.params),
+      }),);
+    else toast.error(message(result.error, result.params));
   }
 
   const addButton = (

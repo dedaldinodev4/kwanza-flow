@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 
 import { Button, ProgressBar } from "@/components/ui";
 import { goalProgress, isGoalOverdue } from "@/lib/calculations";
-import { formatDay } from "@/lib/formatters/date";
 import { useFormat } from "@/providers/use-format";
 import type { SavingsGoal } from "@/types/domain";
 import { useLanguage } from "@/providers/i18n-provider";
@@ -24,19 +23,17 @@ interface GoalCardProps {
 
 export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCardProps) {
   const { t } = useTranslation()
-  const { money, ratio } = useFormat();
-  const { language } = useLanguage()
+  const { money, ratio, day } = useFormat();
   const progress = goalProgress(goal);
   const overdue = isGoalOverdue(goal, today);
   const year = today.slice(0, 4);
-  const demoText = useDemoText()
-  const name = goal.name;
+  const name = useDemoText()(goal.name);
 
   return (
     <li className="rounded-card bg-card shadow-card border p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold">{demoText(name)}</h3>
+          <h3 className="truncate text-sm font-semibold">{name}</h3>
           <p className="money text-caption text-muted-foreground">
             {t("{{amount}} of {{target}}", { amount: money(goal.currentAmount), target: money(goal.targetAmount) })}
           </p>
@@ -68,10 +65,10 @@ export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCa
           </span>
         ) : (
           <span className="money text-muted-foreground">
-            {t("{{amount}} to go · by {{date}}", {
+            {goal.targetDate ? t("{{amount}} to go · by {{date}}", {
               amount: money(progress.remaining),
-              date: goal.targetDate ? formatDay(goal.targetDate, year, language) : ""
-            })}
+              date: day(goal.targetDate, year)
+            }) : t("{{amount}} to go", { amount: progress.remaining }) }
           </span>
         )}
       </div>
@@ -88,7 +85,7 @@ export function GoalCard({ goal, today, onContribute, onEdit, onDelete }: GoalCa
           variant="outline"
           size="sm"
           className="mt-4 cursor-pointer"
-          aria-label={t("Add money to {{name}}", { name: goal.name })}
+          aria-label={t("Add money to {{name}}", { name })}
           onClick={onContribute}
         >
           <Plus aria-hidden className="size-4" />
