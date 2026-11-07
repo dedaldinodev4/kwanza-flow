@@ -14,7 +14,7 @@ export function BudgetSummary({
   monthLabel: string;
 }) {
   const { t } = useTranslation();
-  const { money, ratio, day, month } = useFormat();
+  const { money, ratio } = useFormat();
   const used = totals.limit > 0 ? totals.spent / totals.limit : 0;
   return (
     <Card aria-label={t("Budget summary for {{month}}", { month: monthLabel })}>

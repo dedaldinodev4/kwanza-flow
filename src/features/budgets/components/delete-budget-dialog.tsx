@@ -5,8 +5,6 @@ import { useTranslation } from "react-i18next";
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 
 import { useCategoryName } from "@/hooks/use-i18n";
-import { useLanguage } from "@/providers/i18n-provider";
-import { formatMonth } from "@/lib/formatters/date";
 import { useFormat } from "@/providers/use-format";
 import type { Budget } from "@/types/domain";
 
@@ -24,8 +22,7 @@ export function DeleteBudgetDialog({
   onCloseAutoFocus,
 }: DeleteBudgetDialogProps) {
   const { t } = useTranslation();
-  const { money } = useFormat();
-  const { language } = useLanguage();
+  const { money, month } = useFormat();
   const categoryName = useCategoryName();
 
   const name = budget ? (categoryName(budget.categoryId) ?? t("this category")) : "";
@@ -37,7 +34,7 @@ export function DeleteBudgetDialog({
           description={t("The {{category}} limit for {{month}} ({{amount}}) will be removed. Your transactions are not affected.", {
             amount: money(budget.limit),
             category: name,
-            month: formatMonth(budget.month, language)
+            month: month(budget.month)
           })}
           confirmLabel={t("Delete budget")}
           onConfirm={() => onConfirm(budget)}

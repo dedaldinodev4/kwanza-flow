@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui";
-import { formatMonth } from "@/lib/formatters/date";
 import { shiftMonth } from "@/lib/dates/iso";
-import { useLanguage } from "@/providers/i18n-provider";
+import { useFormat } from "@/providers/use-format";
 
 interface MonthSwitcherProps {
   month: string;
@@ -17,10 +16,12 @@ interface MonthSwitcherProps {
 
 export function MonthSwitcher({ month, currentMonth, onChange }: MonthSwitcherProps) {
   const { t } = useTranslation();
-  const { language } = useLanguage()
+  const { month: getMonth } = useFormat();
+
   return (
     <div role="group" aria-label={t("Month")} className="flex flex-wrap items-center gap-2">
       <Button
+        className="cursor-pointer"
         variant="outline"
         size="icon"
         aria-label={t("Previous month")}
@@ -29,9 +30,10 @@ export function MonthSwitcher({ month, currentMonth, onChange }: MonthSwitcherPr
         <ChevronLeft aria-hidden className="size-4" />
       </Button>
       <p aria-live="polite" className="text-section min-w-36 text-center">
-        {formatMonth(month, language)}
+        {getMonth(month)}
       </p>
       <Button
+        className="cursor-pointer"
         variant="outline"
         size="icon"
         aria-label={t("Next month")}
@@ -40,8 +42,8 @@ export function MonthSwitcher({ month, currentMonth, onChange }: MonthSwitcherPr
         <ChevronRight aria-hidden className="size-4" />
       </Button>
       {month !== currentMonth && (
-        <Button variant="ghost" size="sm" onClick={() => onChange(currentMonth)}>
-          {t("Back to {{month}}", { month: formatMonth(currentMonth, language)} )}
+        <Button className="cursor-pointer" variant="ghost" size="sm" onClick={() => onChange(currentMonth)}>
+          {t("Back to {{month}}", { month: getMonth(currentMonth) })}
         </Button>
       )}
     </div>

@@ -108,9 +108,9 @@ function GoalForm({ mode, onDone }: { mode: GoalFormMode; onDone: () => void }) 
         submitting.current = false;
         return;
       }
-      if (!result.ok) toast.warning( t("{{error}} Your change is kept for this session only.", {
+      if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", {
         error: message(result.error, result.params),
-      }),);
+      }));
       else toast.success(mode.kind === "create" ? t("Goal added") : t("Goal updated"));
       onDone();
     } catch (error) {

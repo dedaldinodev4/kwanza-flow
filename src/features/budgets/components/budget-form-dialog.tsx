@@ -18,7 +18,8 @@ import type { Budget } from "@/types/domain";
 import { budgetFormSchema, toBudgetInput, type BudgetFormValues } from "../schemas/budget-form";
 import { createBudget, updateBudgetLimit } from "../services/budget-service";
 import { useLanguage } from "@/providers/i18n-provider";
-import { useCategoryName } from "@/hooks/use-i18n";
+import { useCategoryName, useDemoText, useMessage } from "@/hooks/use-i18n";
+import { useFormat } from "@/providers/use-format";
 
 export type BudgetFormMode =
   | {
@@ -35,7 +36,7 @@ interface BudgetFormDialogProps {
 
 export function BudgetFormDialog({ mode, onClose }: BudgetFormDialogProps) {
   const { t } = useTranslation();
-  const { language } = useLanguage();
+  const { month: getMonth } = useFormat()
 
   const month = mode?.kind === "create" ? mode.month : mode?.budget.month;
   return (
@@ -45,8 +46,8 @@ export function BudgetFormDialog({ mode, onClose }: BudgetFormDialogProps) {
           title={mode.kind === "create" ? t("Add budget") : t("Edit budget")}
           description={
             mode.kind === "create"
-              ? t(`Set a spending limit for {{month}}.`, { month: formatMonth(month, language) })
-              : t(`Change the {{month}} limit. Spending is tracked automatically.`, { month: formatMonth(month, language) })
+              ? t(`Set a spending limit for {{month}}.`, { month: getMonth(month) })
+              : t(`Change the {{month}} limit. Spending is tracked automatically.`, { month: getMonth(month) })
           }
         >
           <BudgetForm mode={mode} month={month} onDone={onClose} />
@@ -66,6 +67,7 @@ function BudgetForm({
   onDone: () => void;
 }) {
   const { t } = useTranslation();
+  const message = useMessage();
   const uid = useId();
   const { tryMutate } = useAppActions();
   const { language } = useLanguage();
@@ -104,11 +106,13 @@ function BudgetForm({
           : updateBudgetLimit(data, mode.budget.id, input.limit, { now }),
       );
       if (!result.ok && result.reason === "rejected") {
-        setError("root.server", { message: result.error });
+        setError("root.server", { message: message(result.error, result.params) });
         submitting.current = false;
         return;
       }
-      if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", { error: result.error }));
+      if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", {
+        error: message(result.error, result.params),
+      }));
       else toast.success(mode.kind === "create" ? t("Budget added") : t("Budget updated"));
       onDone();
     } catch (error) {
