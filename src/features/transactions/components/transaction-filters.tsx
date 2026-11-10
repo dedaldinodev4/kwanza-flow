@@ -61,7 +61,7 @@ export function TransactionFilters({ query, dispatch, result }: TransactionFilte
       <Button
         variant="outline"
         size="sm"
-        className="sm:hidden"
+        className="sm:hidden cursor-pointer"
         aria-expanded={expanded}
         aria-controls={id("panel")}
         onClick={() => setExpanded((open) => !open)}
@@ -154,7 +154,7 @@ export function TransactionFilters({ query, dispatch, result }: TransactionFilte
       )}
 
       {result.hasActiveFilters && (
-        <Button variant="outline" size="sm" onClick={() => dispatch({ type: "clear" })}>
+        <Button className="cursor-pointer" variant="outline" size="sm" onClick={() => dispatch({ type: "clear" })}>
           {t("Clear filters")}
         </Button>
       )}

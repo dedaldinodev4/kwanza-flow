@@ -5,15 +5,19 @@ import { useTranslation } from "react-i18next";
 
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { useAppActions } from "@/providers/app-data-provider";
+import { useMessage } from "@/hooks/use-i18n";
 
 export function ResetDemoDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation()
   const { resetDemoData } = useAppActions();
+  const message = useMessage()
 
   function confirm() {
     const result = resetDemoData();
     if (result.ok) toast.success(t("Demo data restored"));
-    else toast.warning(t("{{error}} Demo data was restored for this session only.", { error: result.error}));
+    else toast.warning(t("{{error}} Demo data was restored for this session only.", {
+      error: message(result.error, result.params)
+    }));
   }
 
   return (

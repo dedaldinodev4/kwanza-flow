@@ -33,10 +33,10 @@ export function FormattingSection({ preferences }: { preferences: UserPreference
 
 
   function localeOptions(): Choice<Locale>[] {
-    return OPTIONS.map((o) => ({
-      ...o,
-      label : t(o.label),
-      description: formatMoney(SAMPLE_MINOR, { locale: o.value }),
+    return OPTIONS.map((option) => ({
+      ...option,
+      label : t(option.label),
+      description: formatMoney(SAMPLE_MINOR, { locale: option.value }),
     }));
   }
   const options = localeOptions();

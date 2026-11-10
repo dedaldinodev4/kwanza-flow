@@ -20,7 +20,7 @@ import { Pagination } from "./pagination";
 import { TransactionFilters } from "./transaction-filters";
 import type { FormMode } from "./transaction-form-dialog";
 import { TransactionList } from "./transaction-list";
-import { message } from "@/i18n/utils/message";
+import { useMessage } from "@/hooks/use-i18n";
 
 
 const TransactionFormDialog = dynamic(
@@ -40,6 +40,7 @@ const HEADER = {
 export function TransactionsView() {
   const state = useAppData();
   const { t } = useTranslation();
+  const message = useMessage()
   const { tryMutate } = useAppActions();
   const [query, dispatch] = useTransactionQuery();
   const [formMode, setFormMode] = useState<FormMode | null>(null);
@@ -69,8 +70,10 @@ export function TransactionsView() {
     deleted.current = true; // after a delete, focus moves to the results summary (the row is gone)
     if (outcome.ok) toast.success(t("Transaction deleted"));
     else if (outcome.reason === "not-saved")
-      toast.warning(message(`${outcome.error} The deletion is kept for this session only.`));
-    else toast.error(outcome.error);
+      toast.warning(t("{{error}} The deletion is kept for this session only.", {
+        error: message(outcome.error, outcome.params)
+      }));
+    else toast.error(message(outcome.error, outcome.params));
   }
 
   const addButton = (

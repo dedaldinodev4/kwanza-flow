@@ -23,7 +23,7 @@ import {
 import { createTransaction, updateTransaction } from "../services/transaction-service";
 import { useTranslation } from "react-i18next";
 import { message } from "@/i18n/utils/message";
-import { useCategoryName } from "@/hooks/use-i18n";
+import { useCategoryName, useMessage } from "@/hooks/use-i18n";
 
 export type FormMode = { kind: "create" } | { kind: "edit"; transaction: Transaction };
 
@@ -73,6 +73,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
   const submitting = useRef(false);
   const { t } = useTranslation();
   const categoryName = useCategoryName();
+  const message = useMessage();
 
   const today = state.status === "ready" ? state.today : todayIso();
   const {
@@ -110,12 +111,14 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
       );
 
       if (!result.ok && result.reason === "rejected") {
-        setError("root.server", { message: result.error }); // nothing changed: stay open and explain
+        setError("root.server", { message: message(result.error, result.params) }); // nothing changed: stay open and explain
         submitting.current = false;
         return;
       }
       if (!result.ok) {
-        toast.warning(message(`${result.error} Your change is kept for this session only.`));
+        toast.warning(t("{{error}} Your change is kept for this session only.", {
+          error: message(result.error, result.params)
+        }));
       } else {
         toast.success(mode.kind === "create" ? t("Transaction added") : t("Transaction updated"));
       }
@@ -178,7 +181,7 @@ function TransactionForm({ mode, onDone }: { mode: FormMode; onDone: () => void 
             {...register("amount")}
           />
           <p id={id("amount-hint")} className="text-caption text-muted-foreground mt-1.5">
-           {t("Use a comma for cêntimos.")}
+            {t("Use a comma for cêntimos.")}
           </p>
           <FieldError id={id("amount-error")} message={errors.amount?.message} />
         </div>

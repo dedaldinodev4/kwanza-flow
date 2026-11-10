@@ -16,6 +16,7 @@ import type { UserPreferences } from "@/types/domain";
 
 import { profileFormSchema, toProfilePatch, type ProfileFormValues } from "../schemas/profile-form";
 import { updatePreferences } from "../services/preferences-service";
+import { useMessage } from "@/hooks/use-i18n";
 
 export function ProfileSection({ preferences }: { preferences: UserPreferences }) {
 
@@ -35,6 +36,7 @@ export function ProfileSection({ preferences }: { preferences: UserPreferences }
 
 function ProfileForm({ preferences }: { preferences: UserPreferences }) {
   const { t } = useTranslation()
+  const message = useMessage();
   const uid = useId();
   const { tryMutate } = useAppActions();
   const {
@@ -55,11 +57,13 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
     const patch = toProfilePatch(values);
     const result = tryMutate((data) => updatePreferences(data, patch));
     if (!result.ok && result.reason === "rejected") {
-      setError("root.server", { message: result.error });
+      setError("root.server", { message: message(result.error, result.params) });
       return;
     }
-    if (!result.ok) toast.warning(`${result.error} Your change is kept for this session only.`);
-    else toast.success("Profile saved");
+    if (!result.ok) toast.warning(t("{{error}} Your change is kept for this session only.", {
+      error: message(result.error, result.params)
+    }));
+    else toast.success(t("Profile saved"));
   }
 
   const id = (name: string) => `${uid}-${name}`;
@@ -93,7 +97,7 @@ function ProfileForm({ preferences }: { preferences: UserPreferences }) {
             {...register("openingBalance")}
           />
           <p id={id("opening-hint")} className="text-caption text-muted-foreground mt-1.5">
-           {t("The demo account's balance before the first transaction. Your current balance is this plus all income, minus all expenses.")}
+            {t("The demo account's balance before the first transaction. Your current balance is this plus all income, minus all expenses.")}
           </p>
           <FieldError id={id("opening-error")} message={errors.openingBalance?.message} />
         </div>
