@@ -2,6 +2,15 @@
   "name": "kwanzaflow",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Dedaldino Daniel",
+    "url": "https://github.com/dedaldinodev4",
+    "email": "dedaldinodev4@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dedaldinodev4/kwanza-flow"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
